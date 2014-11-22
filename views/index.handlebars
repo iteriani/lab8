@@ -121,7 +121,7 @@
 
 <script>
 $(document).ready(function(){
-	var socket = io('localhost:8000/');
+	var socket = io(document.URL);
 
 	socket.on('update', function(data) {
 		if(data.message == 'message') {
