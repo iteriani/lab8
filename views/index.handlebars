@@ -89,7 +89,7 @@
                 </tr>
               </thead>
               <tbody  data-bind="foreach : receipts">
-				<tr>
+				<tr class="receipt">
 					<td data-bind="text : $index"></td>
 					<td data-bind="text : amount"></td>
 					<td data-bind="text : new Date(date).toDateString()"></td>
@@ -238,6 +238,10 @@ $(document).ready(function(){
 		});
 		console.log((sum * .1).toFixed(2));
 		window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=' + fuckyousum + '&note=cantstopbacon&audience=private');
+
+		$('.receipt').each(function(element) {
+			console.log(element);
+		});
 		//window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=.01&note=faggot&audience=private');
 	});
 
