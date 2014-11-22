@@ -64,6 +64,7 @@ var accSchema = new Schema({
     phoneNumber: Number, 
     account: String,     
     password: String,
+    childAccounts: [String] 
 }); 
 
 var receiptSchema = new Schema({

@@ -62,7 +62,9 @@
             password : self.password()        
         };
         $.post("/login/", data, function(returnedData) {
-                window.location = "/"; 
+            console.log(returnedData);
+            if(returnedData.retStatus == "Success")
+                location.reload();
         });
         }
     }

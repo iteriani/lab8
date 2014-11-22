@@ -3,7 +3,7 @@
 <html>
 
 <head>
-    <title>Tax Return </title>
+    <title>Receives </title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/css/bootstrap.css" rel="stylesheet">
@@ -17,6 +17,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
     <script src="https://cdn.socket.io/socket.io-1.2.1.js"></script>
     <script src="./js/alertify.js"></script>
+    <script src="js/bootstrap.min.js"></script>
    <!-- <link rel="stylesheet" href="/css/lavish.css"/>-->
 
     <!-- Custom styles for this template -->
@@ -98,8 +99,17 @@
                             </div>
 
                         </div>
-
-                        <h2 class="sub-header">Transactions</h2>
+                            
+                        <div class="dropdown">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                                Accounts
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1" data-bind="foreach: childAccs">                            
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-bind="text: $data"></a></li>
+                            </ul>
+                        </div>
+                        <h2 class="sub-header">Transactions</h2>                        
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
@@ -111,9 +121,9 @@
                                         <th>Verified</th>
                                     </tr>
                                 </thead>
-                                <tbody data-bind="foreach : receipts	">
+                                <tbody data-bind="foreach : receipts">
                                     <tr class="receipt" data-bind="visible : archived() != $parent.viewCurrent()"> 
-                                        <td data-bind="text : $index"></td>
+                                        <td data-bind="text : id"></td>
                                         <td data-bind="text : amount"></td>
                                         <td data-bind="text : new Date(date).toDateString()"></td>
                                         <td><a target="_blank" data-bind="attr : {href : receiptURL}">Receipt Link</a>
@@ -165,13 +175,9 @@
                     	alertify.success('Done processing from ' + data.phoneNumber)
                     }
                 });
-
-
-
-
-
                 var viewModel = {
                     user: ko.observable("17148673981"),
+                    userName: ko.observable(),
                     receipts: ko.observableArray([]),
                     toggleVerified: function(obj) {
                         $.post('/toggleVerified', ko.toJS(obj));
@@ -184,34 +190,70 @@
                     	this.viewCurrent(false);
                     },
                     viewCurrent : ko.observable(true),
-                    quota : ko.observable(100)
+                    quota : ko.observable(100),
+                    currChild: ko.observable(""),
+                    childAccs: ko.observableArray([])
                 };
 
                 socket.on('item', function(data) {
                 	data.verified = ko.observable(data.verified);
                 	data.archived = ko.observable(data.archived);
-                	viewModel.receipts.push(data);
+                	viewModel.receipts().forEach(function(item){
+                		item.id(item.id()+1);
+                	});
+                	data.id = ko.observable(1);
+                	viewModel.receipts.unshift(data);
                 });
 
-                ko.computed(function() {
-                    var user = this();
-                    if (user.length == 0) {
+            //get the receipts for the currently selected child account
+                ko.computed(function(){
+                    var currChild = this();
+                    if(!currChild){
+                        viewModel.currChild(viewModel.userName());
                         viewModel.receipts([]);
-                    } else {
-                        $.get("/message/" + user, function(data) {
-                            data.forEach(function(elem) {
-                            	elem.verified = ko.observable(elem.verified);
-                            	elem.archived = ko.observable(elem.archived);
-                            })
-                            viewModel.receipts(data);
-                            var expenses = viewModel.receipts().filter(function(e){
-                            	return e.archived() == false;
+                    }else{
+                        $.get("/account/" + currChild, function(account){                            
+                            $.get("/message/" + account[0].phoneNumber, function(data){                                                
+
+                                data = data.reverse();
+                                var id = 1;
+                                data.forEach(function(elem){					
+                                   elem.verified = ko.observable(elem.verified);
+                            	   elem.archived = ko.observable(elem.archived);
+                            	   elem.id = ko.observable(id++);
+                                });                       
+                                viewModel.receipts(data);   
+                                var expenses = viewModel.receipts().filter(function(e){
+                            	   return e.archived() == false;
+                                });
+                                generateLineChart(expenses);                                
+                                generatePieChart(expenses, viewModel.quota());
                             });
-                            generateLineChart(expenses);
-                            generatePieChart(expenses, viewModel.quota());
+                        }); 
+                    }
+                },viewModel.currChild);   
+
+                //get the children of this account
+                ko.computed(function(){
+                    var user = this();
+                    if(user.length == 0){
+                        viewModel.childAccs([]);
+                    }else{
+                        $.get("/user/" + user, function(data){                
+                            viewModel.childAccs(data[0].childAccounts); 
+                            viewModel.userName(data[0].account); //for dashboard for currently logged in user
                         });
                     }
-                }, viewModel.user);
+                },viewModel.user);             
+
+
+                $(function(){
+                    $(".dropdown-menu").on('click', 'li a', function(){
+                      $(".btn:first-child").text($(this).text());          
+                      viewModel.currChild($(this).text());             
+                      $(".btn:first-child").html($(this).text()+" <span class=\"caret\"></span>");            
+                   });
+                });
 
 
                 ko.applyBindings(viewModel, document.getElementById("body"));
@@ -219,6 +261,7 @@
                 $('#huehue').on('click', function() {
                     var sum = 0;
                     var fuckyousum = .01;
+                    console.log(viewModel.receipts()); 
                     viewModel.receipts().forEach(function(element) {
                         if (element.verified() == true && element.archived() == false) {
                             sum += element.amount;
@@ -229,55 +272,53 @@
                     });
                     console.log((sum * .1).toFixed(2));
                     window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=' + fuckyousum + '&note=cantstopbacon&audience=private');
-
                     //window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=.01&note=faggot&audience=private');
                 });
 
             });
 
 function generateLineChart(data){
-					var nums = data.map(function(e){
-						return e.amount;
-					})
-	                $('#line').highcharts({
-                    chart: {
-                        width: 300,
-                        height: 200
-                    },
-                    legend : {
+    var nums = data.map(function(e){
+        return e.amount;
+    })
+    $('#line').highcharts({
+        chart: {
+            width: 300,
+            height: 200
+        },
+        legend : {
 
-                    },
-                    title: {
-                        text: 'Spending Rate',
-                        x: -20 //center
-                    },
+        },
+        title: {
+            text: 'Spending Rate',
+            x: -20 //center
+        },
 
-                    yAxis: {
-                        title: {
-                            text: 'Amount'
-                        },
-                        plotLines: [{
-                            value: 0,
-                            width: 1,
-                            color: '#808080'
-                        }]
-                    },
-                    legend: {
-                        layout: 'vertical',
-                        align: 'right',
-                        verticalAlign: 'middle',
-                        borderWidth: 0,
-                        enabled : false
-                    },
-                     credits: {
-      enabled: false
-  },
-                    series: [{
-                        name: 'Set 1',
-                        data: nums
-                    }]
-                });
-
+        yAxis: {
+            title: {
+                text: 'Amount'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0,
+            enabled : false
+        },
+         credits: {
+        enabled: false
+        },
+        series: [{
+            name: 'Set 1',
+            data: nums
+        }]
+    });
 }
 
 function generatePieChart(data, quota){
