@@ -66,6 +66,7 @@ app.get('/message', function(req, res) {
 
 app.post("/message", function(req,res){
 	var data = req.body;
+	console.log(data);
 	var phoneNumber = data.from;
 	if(userList[phoneNumber] === undefined){
 		userList[phoneNumber] = {};
