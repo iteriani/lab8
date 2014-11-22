@@ -54,10 +54,10 @@
         <div class="row text-center">
             <div class="col-lg-4 col-lg-offset-4 top-offset col-md-4 col-md-offset-4 col-sm-4 col-sm-offset-4">
                 <form data-bind="submit: doSomething">
-                <input type="text" class="form-control" data-bind="value : user" placeholder="username" name="users">
+                <input type="text" class="form-control" data-bind="value : user" placeholder="User Name" name="users">
                 </br>
                 </br>
-                <input type="password" class="form-control" data-bind="value : password" placeholder="password" name="password">
+                <input type="password" class="form-control" data-bind="value : password" placeholder="Password" name="password">
                 </br>
                 </br>
                 {{!-- can probably expand --}}
@@ -84,18 +84,18 @@
     var viewModel = new function()
     {
         var self = this;    
-        self.user = ko.observable("username");
-        self.password = ko.observable("password");
+        self.user = ko.observable();
+        self.password = ko.observable();
         self.doSomething = function() {
         var data =
         {
             users : self.user(),
             password : self.password()        
         };
-        $.post("/login/", data, function(returnedData) {
-            console.log(returnedData);
-            if(returnedData.retStatus == "Success")
-                location.reload();
+        $.post("/login/", data, function(returnedData) {            
+            if(returnedData == "Success")
+                console.log(returnedData);
+                location.reload( true ); 
         });
         }
     }

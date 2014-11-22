@@ -136,16 +136,25 @@ app.post("/login", function(req, res){
     validateLogin(req, res);    
 }); 
 
+app.get('/user', function(req, res){
+    if(req.session.user){
+        res.send(req.session.user); 
+    }    
+    else
+        res.send("not logged in "); 
+}); 
+
 var validateLogin  = function(req, res){
     var fields = req.body;     
     var username = req.body.users; 
     console.log(username); 
     phoneNumbers.findOne({account : username}, function(err, user){   
-        if(user.password == fields.password)
-        {
-        	req.session.user = user;
-        }    
-        res.end(); 
+    if(user.password == fields.password)
+    {
+        req.session.user = user;
+        res.send("Success");
+    }    
+    res.end(); 
     });     
 }
 
