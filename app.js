@@ -17,6 +17,7 @@ var client = require('twilio')(sid, auth_token);
 
 var client_number = '+19169434276';
 var index = require('./routes/index');
+var access_token;
 
 // Example route
 // var user = require('./routes/user');
