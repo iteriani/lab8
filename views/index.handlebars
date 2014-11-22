@@ -59,6 +59,42 @@
                         </li>
                     </ul>
                 </div>
+            </nav>
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-3 col-md-2 sidebar">
+                        <ul class="nav nav-sidebar">
+                            <li data-bind="css : {active : viewCurrent}"><a href="#" data-bind="click : setCurrent">Current</a>
+                            </li>
+                            <li data-bind="css : {active : !viewCurrent()}"><a href="#" data-bind="click : setArchived">Historical</a>
+                            </li>
+                        </ul>
+                        <hr>
+              
+                        ACCOUNTS: 
+                        <!-- should indent these things --> 
+                        <ul class="nav nav-sidebar" data-bind="foreach: childAccs">                                 
+                            <li><a href="" data-bind="click: $parent.changeChild, text: $data, attr: { id: $data }"></a></li>                                                        
+                        </ul>   
+                        <ul class="nav nav-sidebar">
+                            <li>                            
+                                <form data-bind="submit: addAccount">
+                                    <input type="text" class="form-control" data-bind="value : newChild" placeholder="Phone Number" name="users">
+                                    </br>
+                                    <button class="btn btn-info" type="submit">Add</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-9 col-md-8  " style="margin-left : 10.3%">
+                        <div class="row placeholders">
+                            <div class="col-xs-6 col-sm-3 placeholder">
+
+                            </div>
+                            <div class="col-xs-6 col-sm-3 placeholder">
+
+                            </div>
                 <div id="stuff" class="col-sm-9 col-md-8 col-lg-8" style="background-color: white; margin-left:11%; border: 1px solid black;">
                     <div class="row placeholders">
                         <div class="col-xs-6 col-sm-3 placeholder">
@@ -168,13 +204,19 @@
                         if (elem.nodeType === 1) $(elem).hide().slideDown()
                     },
                     newChild: ko.observable()
-                };
-
-                $.get("/user", function(data) {
-                    console.log(data);
-                    viewModel.user(data.account);
-                    viewModel.currChild(data.account);
-                    viewModel.childAccs(data.childAccounts);
+                };                
+                
+                $.get( "/user", function( data ) {                       
+                    console.log(data); 
+                    viewModel.user(data.account); 
+                    viewModel.currChild(data.account); 
+                    var childAccs = data.childAccounts; 
+                    childAccs.sort(); 
+                    var index = childAccs.indexOf(viewModel.user()); 
+                    var temp = childAccs[0];                    
+                    childAccs[0] = "My Account"; 
+                    childAccs[index] = temp; 
+                    viewModel.childAccs(childAccs);                     
                 });
 
                 ko.bindingHandlers.fadeVisible = {
@@ -204,34 +246,41 @@
                     generateLineChart(expenses);
                     generatePieChart(expenses, viewModel.quota());
                 });
+                
+              viewModel.changeChild = function(child){
+                  console.log(child); 
+                 if(child == viewModel.user())
+                 {
+                     child = "My Account"; 
+                 } 
+                 viewModel.currChild(child); 
+              }
+              
+              viewModel.addAccount = function(child){
+                  var data = {"parent": viewModel.user(), "child": viewModel.newChild()}; 
+                  console.log(data); 
+                  $.post("/account/", data, function(returnedData){
+                      console.log(returnedData); 
+                      viewModel.childAccs.push(returnedData); 
+                  }); 
+              }
+             
 
-                viewModel.changeChild = function(child) {
-                    viewModel.currChild(child);
-                }
-
-                viewModel.addAccount = function(child) {
-                    var data = {
-                        "parent": viewModel.user(),
-                        "child": viewModel.newChild()
-                    };
-                    console.log(data);
-                    $.post("/account/", data, function(returnedData) {
-                        console.log(returnedData);
-                        viewModel.childAccs.push(returnedData);
-                    });
-                }
-
-
-                //get the receipts for the currently selected child account
-                ko.computed(function() {
+            //get the receipts for the currently selected child account
+                ko.computed(function(){
                     var currChild = this();
                     if (!currChild) {
                         viewModel.currChild(viewModel.userName());
-                        viewModel.receipts([]);
-                    } else {
-                        $.get("/account/" + viewModel.currChild(), function(account) {
-                            $.get("/message/" + account[0].phoneNumber, function(data) {
-
+                        viewModel.receipts([]);                        
+                    }
+                    else{
+                        var currChild = viewModel.currChild(); 
+                        if(currChild == "My Account")
+                        {                            
+                            currChild = viewModel.user(); 
+                        }            
+                        $.get("/account/" + currChild, function(account){                            
+                            $.get("/message/" + account[0].phoneNumber, function(data){                                                
                                 data = data.reverse();
                                 var id = 1;
                                 data.forEach(function(elem) {
@@ -253,11 +302,13 @@
                 //get the children of this account
                 ko.computed(function() {
                     var user = this();
-                    if (user) {
+                    if(!user){
                         viewModel.childAccs([]);
-                    } else {
-                        $.get("/user/" + user, function(data) {
-                            viewModel.childAccs(data[0].childAccounts);
+                    }else{
+                        $.get("/user/" + user, function(data){    
+                            var childAccs = data[0].childAccounts; 
+                            var index = childAccs.indexOf(viewModel.user()); 
+                            viewModel.childAccs(childAccs);                                                                            
                             viewModel.userName(data[0].account); //for dashboard for currently logged in user
                         });
                     }
