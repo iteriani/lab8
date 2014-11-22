@@ -30,7 +30,7 @@ mongoose.connect('mongodb://cantstopthe:bacon@kahana.mongohq.com:10081/BuddyWatc
 var userList = {};
 /* id : {photo : null, amount : null}*/
 
-var Message = mongoose.model("Recipt", {receiptURL : String, userID : String, amount : Number});
+var Message = mongoose.model("Recipt", {receiptURL : String, userID : String, amount : Number, date : Date});
 
 
 // all environments
@@ -86,7 +86,7 @@ app.post("/message", function(req,res){
 	if(userList[phoneNumber].message != null && userList[phoneNumber].photo != null){
 		console.log("SAVING MESSAGE")
 		var amount = parseFloat(userList[phoneNumber].message);
-		var message = new Message({receiptURL : userList[phoneNumber].photo, userID : phoneNumber, amount : amount});
+		var message = new Message({receiptURL : userList[phoneNumber].photo, userID : phoneNumber, amount : amount, date: new Date()});
 		message.save(function(err,data){
 			console.log("WHAT?")
 			if(err){
