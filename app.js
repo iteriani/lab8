@@ -45,7 +45,7 @@ var parentsSchema = new Schema({
     name: String
 });  
 var receiptSchema = new Schema({
-    receiptURL : String, userID : String, amount : Number, verified : String
+    receiptURL : String, userID : String, amount : Number, verified : String, date : Date
 }); 
 
 /*
@@ -54,6 +54,7 @@ var receiptSchema = new Schema({
 var Message = mongoose.model("Recipt", receiptSchema);
 var phoneNumbers = mongoose.model("User", accSchema); 
 var parents = mongoose.model("Parents", parentsSchema); 
+
 
 // all environments
 app.set('port', process.env.PORT || 8000);
