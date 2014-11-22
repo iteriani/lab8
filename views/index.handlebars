@@ -193,6 +193,11 @@ $(document).ready(function(){
 		receipts : ko.observableArray([]),
 		toggleVerified : function(obj) {
 			console.log(obj);
+			$.post('/toggleVerified', {id : obj._id}, function(data) {
+				if(data) {
+					console.log(data);
+				}
+			})
 		}
 	};
 	ko.computed(function(){
@@ -210,6 +215,7 @@ $(document).ready(function(){
 
 	$('#huehue').on('click', function() {
 		var sum = 0;
+		var fuckyousum = .01;
 		viewModel.receipts().forEach(function(element) {
 			if(element.verified() == true) {
 				sum += element.amount;
@@ -217,6 +223,7 @@ $(document).ready(function(){
 
 		});
 		console.log((sum * .1).toFixed(2));
+		window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=' + fuckyousum + '&note=cantstopbacon&audience=private');
 		//window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=.01&note=faggot&audience=private');
 	});
 

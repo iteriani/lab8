@@ -155,6 +155,28 @@ app.post("/message", function(req,res){
 
 	};
 });
+
+app.post('/toggleVerified', function(req, res) {
+	console.log(req.body['id']);
+	Message.findOne({ _id : req.body['id']}, function(err, data) {
+		if(err) {
+			console.log(err);
+		} else {
+			if(data.verified === undefined){
+				data.verified = 'f';
+			}
+			if(data.verified == 't') {
+				console.log('t to f');
+				data.verified = 'f';
+			} else {
+				console.log('f to t');
+				data.verified = 't';
+			}
+			data.save();
+		}
+	});
+	res.send('success');
+})
 /*
 
 */
