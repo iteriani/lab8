@@ -14,9 +14,6 @@ var auth_token = 'f30c6a8697775dab747212043d550982';
 var client = require('twilio')(sid, auth_token);
 
 var client_number = '+19169434276';
-
-client && console.log('Twilio client created');
-
 var index = require('./routes/index');
 
 // Example route
