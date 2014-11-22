@@ -18,7 +18,9 @@
     "express3-handlebars": "*",
     "mongodb": "*",
     "mongoose": "*",
-    "twilio" : "*"
+    "twilio" : "*",
+    "venmo" : "*",
+    "request" : "*"
   },
   "engines": {
     "node": "0.10.x"

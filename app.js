@@ -8,6 +8,8 @@ var http = require('http');
 var path = require('path');
 var handlebars = require('express3-handlebars');
 
+var request = require('request');
+
 var sid = 'AC0656d1bf2627a49bc8bcc853629936ff';
 var auth_token = 'f30c6a8697775dab747212043d550982';
 
@@ -62,6 +64,10 @@ app.get('/message', function(req, res) {
 	});
 
 	res.end();
+});
+
+app.get('/url', function(req, res) {
+	res.send(req.query('venmo_challenge'));
 });
 
 app.post("/message", function(req,res){
