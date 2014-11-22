@@ -183,6 +183,9 @@ function generate(index, list) {
 		if(list[i] == null) {
 			continue;
 		}
+		if(dict[c] == null){
+			continue;
+		}
 		dict[c].forEach(function(element) {
 			var newString = list[i].slice();
 			newString = newString.slice(0, i) + element + newString.slice(i + 1);
