@@ -174,14 +174,10 @@
                     percentage : ko.observable(10),
                     viewCurrent : ko.observable(true),
                     quota : ko.observable(100),
-                    currChild: ko.observable("tomo"),
+                    currChild: ko.observable(""),
                     childAccs: ko.observableArray([]),
                     showReceipt : function(elem) { if (elem.nodeType === 1) $(elem).hide().slideDown() }
                 };
-
-            viewModel.changeChild = function(child){
-                viewModel.currChild(child); 
-            }
 
                 ko.bindingHandlers.fadeVisible = {
                     init: function(element, valueAccessor) {
@@ -205,6 +201,10 @@
                 	data.id = ko.observable(1);
                 	viewModel.receipts.unshift(data);
                 });
+                
+             viewModel.changeChild = function(child){
+                viewModel.currChild(child); 
+            }
 
             //get the receipts for the currently selected child account
                 ko.computed(function(){
@@ -221,8 +221,9 @@
                                 var id = 1;
                                 data.forEach(function(elem){					
                                    elem.verified = ko.observable(elem.verified);
-                                   elem.archived = ko.observable(elem.archived);
-                                })                       
+                            	   elem.archived = ko.observable(elem.archived);
+                            	   elem.id = ko.observable(id++);
+                                });                       
                                 viewModel.receipts(data);   
                                 var expenses = viewModel.receipts().filter(function(e){
                                    return e.archived() == false;
