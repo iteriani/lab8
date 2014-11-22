@@ -55,17 +55,11 @@ if ('development' == app.get('env')) {
 
 // Add routes here
 app.get('/', index.view);
-app.get('/grid', index.viewGrid);
-app.get('/message', function(req, res) {
-	client.messages.create({
-		body: 'cant stop the bacon',
-		to: '+19168031223',
-		from: client_number
-	}, function(err, message) {
-		console.log(message);
-	});
-
-	res.end();
+app.get("/message/:phone", function(req,res){
+	console.log(req.params);
+	Message.find({userID : "+" + req.params.phone}, function(err,data){
+		res.json(data)
+	})
 });
 
 app.post("/message", function(req,res){
@@ -92,7 +86,6 @@ app.post("/message", function(req,res){
 			if(err){
 				console.log("ERORR");
 			}
-			console.log(err,data);
 		});
 		delete userList[phoneNumber];
 	};
