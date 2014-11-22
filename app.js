@@ -21,7 +21,11 @@ var index = require('./routes/index');
 
 var app = express();
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://cantstopthe:bacon@kahana.mongohq.com:10081/BuddyWatch');
+mongoose.connect('mongodb://cantstopthe:bacon@kahana.mongohq.com:10081/BuddyWatch', function(err){
+	if(err){console.log("NO CONNECT");}else{
+		console.log("connected!");
+	}
+});
 
 var userList = {};
 /* id : {photo : null, amount : null}*/
@@ -79,9 +83,14 @@ app.post("/message", function(req,res){
 		console.log("set up message for " + phoneNumber);
 	}
 	if(userList[phoneNumber].message != null && userList[phoneNumber].photo != null){
+		console.log("SAVING MESSAGE")
 		var amount = parseFloat(userList[phoneNumber].message);
 		var message = new Message({receiptURL : userList[phoneNumber].photo, userID : phoneNumber, amount : amount});
 		message.save(function(err,data){
+			console.log("WHAT?")
+			if(err){
+				console.log("ERORR");
+			}
 			console.log(err,data);
 		});
 		delete userList[phoneNumber];
