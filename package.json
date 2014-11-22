@@ -20,7 +20,8 @@
     "mongoose": "*",
     "twilio" : "*",
     "venmo" : "*",
-    "request" : "*"
+    "request" : "*",
+    "socket.io" : "*"
   },
   "engines": {
     "node": "0.10.x"
