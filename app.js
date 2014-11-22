@@ -141,11 +141,12 @@ var validateLogin  = function(req, res){
     var username = req.body.users; 
     console.log(username); 
     phoneNumbers.findOne({account : username}, function(err, user){   
-        if(user.password == fields.password)
-        {
-        	req.session.user = user;
-        }    
-        res.end(); 
+    if(user.password == fields.password)
+    {
+        req.session.user = user;
+        res.send("Success");
+    }    
+    res.end(); 
     });     
 }
 
