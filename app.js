@@ -37,6 +37,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 var server = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
+
+var login = require('./routes/login'); 
 // Example route
 // var user = require('./routes/user');
 
@@ -81,7 +83,6 @@ var phoneNumbers = mongoose.model("User", accSchema, "phoneNumbers");
 
 
 // all environments
-
 
 // development only
 if ('development' == app.get('env')) {
