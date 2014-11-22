@@ -124,10 +124,15 @@ $(document).ready(function(){
 	var socket = io('localhost:8000/');
 
 	socket.on('update', function(data) {
-		//phase1
-		//phase2
-		//phase3
-		//phase4
+		if(data.message == 'message') {
+			console.log(data);
+		} else if(data.message == 'image') {
+			console.log(data);
+		} else if(data.message == 'saving') {
+			console.log(data);
+		} else {
+			console.log('wtf');
+		}
 	});
 
    $('#line').highcharts({

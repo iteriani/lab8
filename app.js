@@ -161,14 +161,17 @@ app.post("/message", function(req,res){
 		userList[phoneNumber] = {};
 	}  
 	if(data.MediaUrl0){
+		io.emit('update', { message: 'image'});
 		userList[phoneNumber].photo = data.MediaUrl0;
 		console.log("set up photo for " + phoneNumber);
 	}else{
+		io.emit('update', { message : 'message'});
 		userList[phoneNumber].message = data.Body;
 		console.log("set up message for " + phoneNumber);
 	}
 	console.log(userList[phoneNumber]);
 	if(userList[phoneNumber].message != null && userList[phoneNumber].photo != null){
+		io.emit('update', { message : 'saving'});
 		console.log("SAVING MESSAGE")
 		var amount = parseFloat(userList[phoneNumber].message);
 		var item = {receiptURL : userList[phoneNumber].photo, userID : phoneNumber, amount : amount, date: new Date(), archived : false};
@@ -216,6 +219,6 @@ app.post('/toggleVerified', function(req, res) {
 */
 
 
-io.on('connection', function(data) {
+io.on('connection', function(socket) {
 	console.log('connected');
 })
