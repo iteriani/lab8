@@ -58,6 +58,15 @@
                         <ul class="nav nav-sidebar" data-bind="foreach: childAccs">                            
                             <li><a href="" data-bind="click: $parent.changeChild, text: $data, attr: { id: $data }"></a></li>                            
                         </ul>   
+                        <ul class="nav nav-sidebar">
+                            <li>                            
+                                <form data-bind="submit: addAccount">
+                                    <input type="text" class="form-control" data-bind="value : newChild" placeholder="Phone Number" name="users">
+                                    </br>
+                                    <button class="btn btn-info" type="submit">Add</button>
+                                </form>
+                            </li>
+                        </ul>
                     </div>
                     <div class="col-sm-9 col-md-8  " style="margin-left : 10.3%">
                         <div class="row placeholders">
@@ -70,7 +79,7 @@
 
                         </div>
                             
-                        <div class="dropdown">
+                        <!--<div class="dropdown">
                             <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
                                 Accounts
                                 <span class="caret"></span>
@@ -78,7 +87,7 @@
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1" data-bind="foreach: childAccs">                            
                                 <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-bind="text: $data"></a></li>
                             </ul>
-                        </div>
+                        </div>--> 
                         <h2 class="sub-header">Transactions </h2>                        
                         <button class="btn btn-info" id="huehue">Pay using Venmo</button>
                         <input data-bind="value : percentage" style="width:10%"></input> %
@@ -164,8 +173,10 @@
                     percentage : ko.observable(10),
                     viewCurrent : ko.observable(true),
                     quota : ko.observable(100),
-                    currChild: ko.observable(""),
-                    childAccs: ko.observableArray([])
+                    currChild: ko.observable("tomo"),
+                    childAccs: ko.observableArray([]),
+                    showReceipt : function(elem) { if (elem.nodeType === 1) $(elem).hide().slideDown() },
+                    newChild: ko.observable()
                 };
 
                 ko.bindingHandlers.fadeVisible = {
@@ -191,9 +202,19 @@
                 	viewModel.receipts.unshift(data);
                 });
                 
-             viewModel.changeChild = function(child){
-                viewModel.currChild(child); 
-            }
+              viewModel.changeChild = function(child){
+                 viewModel.currChild(child); 
+              }
+              
+              viewModel.addAccount = function(child){
+                  var data = {"parent": viewModel.user(), "child": viewModel.newChild()}; 
+                  console.log(data); 
+                  $.post("/account/", data, function(returnedData){
+                      console.log(returnedData); 
+                      viewModel.childAccs.push(returnedData); 
+                  }); 
+              }
+             
 
             //get the receipts for the currently selected child account
                 ko.computed(function(){
