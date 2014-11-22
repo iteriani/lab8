@@ -13,7 +13,8 @@
 	<script src="https://code.highcharts.com/modules/exporting.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
 	<script src="https://cdn.socket.io/socket.io-1.2.1.js"></script>
-
+    <script src="js/accController.js"></script>
+    <script src="js/bootstrap.min.js"></script>
     <!-- Custom styles for this template -->
     <link href="http://getbootstrap.com/examples/dashboard/dashboard.css" rel="stylesheet">
 <head>
@@ -66,8 +67,16 @@
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">Dashboard</h1>
-
+          <h1 class="page-header">Dashboard</h1>        
+          <div class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+              Accounts
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1" data-bind="foreach: childAccs">                            
+              <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-bind="text: $data"></a></li>
+            </ul>
+          </div>
           <div class="row placeholders">
             <div class="col-xs-6 col-sm-3 placeholder">
               <div id="pie"></div>
@@ -207,37 +216,55 @@ $(document).ready(function(){
 
 
 	var viewModel = {
-		user : ko.observable("17148673981"), 
+		user : ko.observable("17148673981"), //because own profile    
+        userName: ko.observable(),
 		receipts : ko.observableArray([]),
 		toggleVerified : function(obj) {
 			$.post('/toggleVerified', obj);
 			return true;
-		}
-
+		},
+        currChild: ko.observable("17148673981"),
+        childAccs: ko.observableArray([])
 	};
+    
+    //get the receipts for the currently selected child account
+    ko.computed(function(){
+		var currChild = this();
+		if(currChild.length == 0){
+			viewModel.receipts([]);
+		}else{
+            $.get("/account/" + currChild, function(account){
+                console.log(account); 
+                $.get("/message/" + account[0].phoneNumber, function(data){                
+                    data.forEach(function(elem){					
+                        if(elem.verified == true){
+                            elem.verified = ko.observable(true);
+                        }else{
+                            elem.verified = ko.observable(false);
+                        }
+
+                    })
+                    viewModel.receipts(data);
+                });
+            }); 
+		}
+	},viewModel.currChild);   
+    
+    //get the children of this account
 	ko.computed(function(){
 		var user = this();
 		if(user.length == 0){
-			viewModel.receipts([]);
+			viewModel.childAccs([]);
 		}else{
-			$.get("/message/" + user, function(data){
-				data.forEach(function(elem){
-					
-					if(elem.verified == true){
-						elem.verified = ko.observable(true);
-					}else{
-						elem.verified = ko.observable(false);
-					}
-
-				})
-				viewModel.receipts(data);
+			$.get("/user/" + user, function(data){                
+				viewModel.childAccs(data[0].childAccounts); 
+                viewModel.userName(data[0].account); //for dashboard for currently logged in user
 			});
 		}
-	},viewModel.user);
-
-
+	},viewModel.user);             
+    
 	ko.applyBindings(viewModel, document.getElementById("body"));
-
+    
 	$('#huehue').on('click', function() {
 		var sum = 0;
 		var fuckyousum = .01;
@@ -255,6 +282,14 @@ $(document).ready(function(){
 		});
 		//window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=.01&note=faggot&audience=private');
 	});
+    
+    $(function(){
+        $(".dropdown-menu").on('click', 'li a', function(){
+          $(".btn:first-child").text($(this).text());          
+          viewModel.currChild($(this).text());             
+          $(".btn:first-child").html($(this).text()+" <span class=\"caret\"></span>");            
+       });
+    });
 
 });
 </script>
