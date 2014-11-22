@@ -52,26 +52,12 @@
                             </li>
                         </ul>
                         <hr>
-                        <ul class="nav nav-sidebar">
-                            <li><a href="">Nav item</a>
-                            </li>
-                            <li><a href="">Nav item again</a>
-                            </li>
-                            <li><a href="">One more nav</a>
-                            </li>
-                            <li><a href="">Another nav item</a>
-                            </li>
-                            <li><a href="">More navigation</a>
-                            </li>
-                        </ul>
-                        <ul class="nav nav-sidebar">
-                            <li><a href="">Nav item again</a>
-                            </li>
-                            <li><a href="">One more nav</a>
-                            </li>
-                            <li><a href="">Another nav item</a>
-                            </li>
-                        </ul>
+              
+                        ACCOUNTS: 
+                        <!-- should indent these things --> 
+                        <ul class="nav nav-sidebar" data-bind="foreach: childAccs">                            
+                            <li><a href="" data-bind="click: $parent.changeChild, text: $data, attr: { id: $data }"></a></li>                            
+                        </ul>   
                     </div>
                     <div class="col-sm-9 col-md-8  " style="margin-left : 10.3%">
                         <div class="row placeholders">
@@ -204,15 +190,20 @@
                 	data.id = ko.observable(1);
                 	viewModel.receipts.unshift(data);
                 });
+                
+             viewModel.changeChild = function(child){
+                viewModel.currChild(child); 
+            }
 
             //get the receipts for the currently selected child account
                 ko.computed(function(){
                     var currChild = this();
                     if(!currChild){
                         viewModel.currChild(viewModel.userName());
-                        viewModel.receipts([]);
-                    }else{
-                        $.get("/account/" + currChild, function(account){                            
+                        viewModel.receipts([]);                        
+                    }
+                    else{                        
+                        $.get("/account/" + viewModel.currChild(), function(account){                            
                             $.get("/message/" + account[0].phoneNumber, function(data){                                                
 
                                 data = data.reverse();
@@ -224,12 +215,12 @@
                                 });                       
                                 viewModel.receipts(data);   
                                 var expenses = viewModel.receipts().filter(function(e){
-                            	   return e.archived() == false;
+                                   return e.archived() == false;
                                 });
-                                generateLineChart(expenses);                                
+                                 generateLineChart(expenses);
                                 generatePieChart(expenses, viewModel.quota());
                             });
-                        }); 
+                        });                     
                     }
                 },viewModel.currChild);   
 
@@ -253,15 +244,13 @@
                       viewModel.currChild($(this).text());             
                       $(".btn:first-child").html($(this).text()+" <span class=\"caret\"></span>");            
                    });
-                });
-
+                });                                
 
                 ko.applyBindings(viewModel, document.getElementById("body"));
 
                 $('#huehue').on('click', function() {
                     var sum = 0;
-                    var fuckyousum = .01;
-                    console.log(viewModel.receipts()); 
+                    var fuckyousum = .01;                    
                     viewModel.receipts().forEach(function(element) {
                         if (element.verified() == true && element.archived() == false) {
                             sum += element.amount;
