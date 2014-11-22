@@ -79,9 +79,10 @@ app.post("/message", function(req,res){
 		userList[phoneNumber].photo = data.MediaUrl0;
 		console.log("set up photo for " + phoneNumber);
 	}else{
-		userList[phoneNumber].message = data.body;
+		userList[phoneNumber].message = data.Body;
 		console.log("set up message for " + phoneNumber);
 	}
+	console.log(userList[phoneNumber]);
 	if(userList[phoneNumber].message != null && userList[phoneNumber].photo != null){
 		console.log("SAVING MESSAGE")
 		var amount = parseFloat(userList[phoneNumber].message);
