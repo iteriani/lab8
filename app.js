@@ -98,7 +98,10 @@ app.get('/pay', function(req, res) {
 	} else {
 		request('https://api.venmo.com/v1/payments/?access_token='+ access_token + 
 			'&phone=17148673981&note=faggot&amount=.01&audience=private', function(error, response, body) {
-				console.log(error, response, body);
+				if(error) {
+					console.log('ERROR ' + error);
+				}
+				console.log('RESPONSE ' + response);
 		});
 		res.end();
 	}
