@@ -130,7 +130,7 @@ app.post("/message", function(req,res){
 					item.verified = true;
 					console.log("VERIFIED");
 				}else{
-					item.verified = true;
+					item.verified = false;
 					console.log("NOT VERIFIED");
 				}
 				var message = new Message(item);
@@ -149,12 +149,11 @@ app.post("/message", function(req,res){
 });
 
 app.post('/toggleVerified', function(req, res) {
-	console.log(req.body['id']);
-	Message.findOne({ _id : req.body['id']}, function(err, data) {
+	Message.findOne({ _id : req.body['_id']}, function(err, data) {
 		if(err) {
 			console.log(err);
 		} else {
-			data.verified = !data.verified;
+			data.verified = req.body.verified;
 			data.save();
 		}
 	});

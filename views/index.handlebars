@@ -94,7 +94,7 @@
 					<td data-bind="text : amount"></td>
 					<td data-bind="text : new Date(date).toDateString()"></td>
 					<td><a target="_blank" data-bind="attr : {href : receiptURL}">Receipt Link</a></td>
-					<td>  <input type="checkbox" data-bind="checked : verified" class="form-control" ></td>
+					<td>  <input type="checkbox" data-bind="checked : verified, click : $parent.toggleVerified" class="form-control" ></td>
 				</tr>
               </tbody>
             </table>
@@ -188,17 +188,19 @@ $(document).ready(function(){
             ]
         }]
     });
-    	function toggleVerified(obj) {
-			$.post('/toggleVerified', {id : obj._id}, function(data) {
-				if(data) {
-					console.log(data);
-				}
-			})
-		}
+
 
 	var viewModel = {
 		user : ko.observable("17148673981"), 
 		receipts : ko.observableArray([]),
+		toggleVerified : function(obj) {
+			$.post('/toggleVerified', obj, function(data) {
+				if(data) {
+					console.log(data);
+				}
+			})
+			return true;
+		}
 
 	};
 	ko.computed(function(){
@@ -208,16 +210,13 @@ $(document).ready(function(){
 		}else{
 			$.get("/message/" + user, function(data){
 				data.forEach(function(elem){
-					console.log(elem.verified);
-					if(elem.verified == 'true'){
+					
+					if(elem.verified == true){
 						elem.verified = ko.observable(true);
 					}else{
 						elem.verified = ko.observable(false);
 					}
 
-					ko.computed(function(){
-						toggleVerified(elem);
-					},elem.verified);
 				})
 				viewModel.receipts(data);
 			});
