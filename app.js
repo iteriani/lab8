@@ -23,12 +23,16 @@ var index = require('./routes/index');
 
 var app = express();
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://cantstopthe:bacon@kahana.mongohq.com:10081/BuddyWatch');
+mongoose.connect('mongodb://cantstopthe:bacon@kahana.mongohq.com:10081/BuddyWatch', function(err){
+	if(err){console.log("NO CONNECT");}else{
+		console.log("connected!");
+	}
+});
 
 var userList = {};
 /* id : {photo : null, amount : null}*/
 
-var Message = mongoose.model("Recipt", {receiptURL : String, userID : String, amount : Number});
+var Message = mongoose.model("Recipt", {receiptURL : String, userID : String, amount : Number, date : Date});
 
 
 // all environments
@@ -53,17 +57,11 @@ if ('development' == app.get('env')) {
 
 // Add routes here
 app.get('/', index.view);
-app.get('/grid', index.viewGrid);
-app.get('/message', function(req, res) {
-	client.messages.create({
-		body: 'cant stop the bacon',
-		to: '+19168031223',
-		from: client_number
-	}, function(err, message) {
-		console.log(message);
-	});
-
-	res.end();
+app.get("/message/:phone", function(req,res){
+	console.log(req.params);
+	Message.find({userID : "+" + req.params.phone}, function(err,data){
+		res.json(data)
+	})
 });
 
 app.get('/url', function(req, res) {
@@ -72,7 +70,8 @@ app.get('/url', function(req, res) {
 
 app.post("/message", function(req,res){
 	var data = req.body;
-	var phoneNumber = data.from;
+	console.log(data);
+	var phoneNumber = data.From;
 	if(userList[phoneNumber] === undefined){
 		userList[phoneNumber] = {};
 	}
@@ -80,14 +79,19 @@ app.post("/message", function(req,res){
 		userList[phoneNumber].photo = data.MediaUrl0;
 		console.log("set up photo for " + phoneNumber);
 	}else{
-		userList[phoneNumber].message = data.body;
+		userList[phoneNumber].message = data.Body;
 		console.log("set up message for " + phoneNumber);
 	}
+	console.log(userList[phoneNumber]);
 	if(userList[phoneNumber].message != null && userList[phoneNumber].photo != null){
+		console.log("SAVING MESSAGE")
 		var amount = parseFloat(userList[phoneNumber].message);
-		var message = new Message({receiptURL : userList[phoneNumber].photo, userID : phoneNumber, amount : amount});
+		var message = new Message({receiptURL : userList[phoneNumber].photo, userID : phoneNumber, amount : amount, date: new Date()});
 		message.save(function(err,data){
-			console.log(err,data);
+			console.log("WHAT?")
+			if(err){
+				console.log("ERORR");
+			}
 		});
 		delete userList[phoneNumber];
 	};
