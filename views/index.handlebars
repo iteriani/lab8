@@ -94,7 +94,7 @@
 					<td data-bind="text : amount"></td>
 					<td data-bind="text : new Date(date).toDateString()"></td>
 					<td><a target="_blank" data-bind="attr : {href : receiptURL}">Receipt Link</a></td>
-					<td>  <input type="checkbox" data-bind="checked : verified, click : $parent.toggleVerified" class="form-control" ></td>
+					<td>  <input type="checkbox" data-bind="checked : verified" class="form-control" ></td>
 				</tr>
               </tbody>
             </table>
@@ -188,17 +188,18 @@ $(document).ready(function(){
             ]
         }]
     });
-	var viewModel = {
-		user : ko.observable("17148673981"), 
-		receipts : ko.observableArray([]),
-		toggleVerified : function(obj) {
-			console.log(obj);
+    	function toggleVerified(obj) {
 			$.post('/toggleVerified', {id : obj._id}, function(data) {
 				if(data) {
 					console.log(data);
 				}
 			})
 		}
+
+	var viewModel = {
+		user : ko.observable("17148673981"), 
+		receipts : ko.observableArray([]),
+
 	};
 	ko.computed(function(){
 		var user = this();
@@ -209,15 +210,20 @@ $(document).ready(function(){
 				data.forEach(function(elem){
 					console.log(elem.verified);
 					if(elem.verified == 'true'){
-						elem.verified = true;
+						elem.verified = ko.observable(true);
 					}else{
-						elem.verified = false;
+						elem.verified = ko.observable(false);
 					}
+
+					ko.computed(function(){
+						toggleVerified(elem);
+					},elem.verified);
 				})
 				viewModel.receipts(data);
 			});
 		}
 	},viewModel.user);
+
 
 	ko.applyBindings(viewModel, document.getElementById("body"));
 
@@ -225,7 +231,7 @@ $(document).ready(function(){
 		var sum = 0;
 		var fuckyousum = .01;
 		viewModel.receipts().forEach(function(element) {
-			if(element.verified == true) {
+			if(element.verified() == true) {
 				sum += element.amount;
 			}
 

@@ -45,7 +45,7 @@ var parentsSchema = new Schema({
     name: String
 });  
 var receiptSchema = new Schema({
-    receiptURL : String, userID : String, amount : Number, verified : String, date : Date
+    receiptURL : String, userID : String, amount : Number, verified : Boolean, date : Date, archived : Boolean
 }); 
 
 /*
