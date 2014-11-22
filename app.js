@@ -228,6 +228,28 @@ app.post('/toggleArchived', function(req, res) {
 	});
 	res.end();
 })
+
+app.post('/account', function(req, res){
+    //find parent account    
+    console.log(req.body); 
+    phoneNumbers.findOne({ phoneNumber : req.body.parent}, function(err, data){        
+        if(err){
+            console.log(err);
+        }
+        else{
+            if(data!=null){                            
+                phoneNumbers.findOne({ phoneNumber : req.body.child}, function(err, retData){                                                            
+                    if(data.childAccounts.indexOf(retData.account) < 0)
+                    {
+                       data.childAccounts.push(retData.account); 
+                       data.save(); 
+                    }
+                }); 
+            }
+        }
+    });
+}); 
+
 /*
 
 */
