@@ -38,19 +38,6 @@
                         <a class="navbar-brand" href="#">Receives &nbsp ✓</i></a>
                     </div>
                     <div id="navbar" class="navbar-collapse collapse">
-                        <ul class="nav navbar-nav navbar-right">
-                            <li><a href="#">Dashboard</a>
-                            </li>
-                            <li><a href="#">Settings</a>
-                            </li>
-                            <li><a href="#">Profile</a>
-                            </li>
-                            <li><a href="#">Help</a>
-                            </li>
-                        </ul>
-                        <form class="navbar-form navbar-right">
-                            <input type="text" class="form-control" data-bind="value : user" placeholder="Search...">
-                        </form>
                     </div>
                 </div>
             </nav>
@@ -109,7 +96,9 @@
                                 <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-bind="text: $data"></a></li>
                             </ul>
                         </div>
-                        <h2 class="sub-header">Transactions</h2>                        
+                        <h2 class="sub-header">Transactions </h2>                        
+                        <button class="btn btn-info" id="huehue">Pay using Venmo</button>
+                        <input data-bind="value : percentage" style="width:10%"></input> %
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
@@ -121,7 +110,7 @@
                                         <th>Verified</th>
                                     </tr>
                                 </thead>
-                                <tbody data-bind="foreach : receipts">
+                                <tbody data-bind="foreach : receipts, afterAdd : showReceipt">
                                     <tr class="receipt" data-bind="visible : archived() != $parent.viewCurrent()"> 
                                         <td data-bind="text : id"></td>
                                         <td data-bind="text : amount"></td>
@@ -134,7 +123,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <button class="btn btn-info" id="huehue">Pay</button>
+                           
                         </div>
                     </div>
                     <div class="col-md-2 " style="margin-left:4%; margin-top:4%">
@@ -189,10 +178,25 @@
                     setArchived : function(){
                     	this.viewCurrent(false);
                     },
+                    percentage : ko.observable(10),
                     viewCurrent : ko.observable(true),
                     quota : ko.observable(100),
                     currChild: ko.observable(""),
-                    childAccs: ko.observableArray([])
+                    childAccs: ko.observableArray([]),
+                    showReceipt : function(elem) { if (elem.nodeType === 1) $(elem).hide().slideDown() }
+                };
+
+                ko.bindingHandlers.fadeVisible = {
+                    init: function(element, valueAccessor) {
+                        // Initially set the element to be instantly visible/hidden depending on the value
+                        var value = valueAccessor();
+                        $(element).toggle(ko.unwrap(value)); // Use "unwrapObservable" so we can handle values that may or may not be observable
+                    },
+                    update: function(element, valueAccessor) {
+                        // Whenever the value subsequently changes, slowly fade the element in or out
+                        var value = valueAccessor();
+                        ko.unwrap(value) ? $(element).fadeIn() : $(element).fadeOut();
+                    }
                 };
 
                 socket.on('item', function(data) {
@@ -266,11 +270,12 @@
                         if (element.verified() == true && element.archived() == false) {
                             sum += element.amount;
                             element.archived(true);
-                            $.post("/toggleArchived", ko.toJS(element));
+                      //      $.post("/toggleArchived", ko.toJS(element));
                         }
 
                     });
-                    console.log((sum * .1).toFixed(2));
+                    var percentage = parseFloat(viewModel.percentage());
+                    var paidValue = (sum*percentage/100).toPrecision(2);
                     window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=' + fuckyousum + '&note=cantstopbacon&audience=private');
                     //window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=.01&note=faggot&audience=private');
                 });

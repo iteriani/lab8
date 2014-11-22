@@ -219,8 +219,11 @@ app.post('/toggleArchived', function(req, res) {
 		if(err) {
 			console.log(err);
 		} else {
-			data.archived = req.body.archived;
-			data.save();
+			if(data != null){
+				data.archived = req.body.archived;
+				data.save();				
+			}
+
 		}
 	});
 	res.end();
