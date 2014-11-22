@@ -93,9 +93,8 @@
             password : self.password()        
         };
         $.post("/login/", data, function(returnedData) {            
-            if(returnedData == "Success")
-                console.log(returnedData);
-                location.reload( true ); 
+            window.location = "/";
+
         });
         }
     }
