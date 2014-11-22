@@ -6,14 +6,15 @@
     <title>Tax Return </title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="/css/bootstrap.css" rel="stylesheet">
+   <!-- <link href="/css/bootstrap-theme.min.css" rel="stylesheet">-->
     <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/highcharts-more.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
     <script src="https://cdn.socket.io/socket.io-1.2.1.js"></script>
+   <!-- <link rel="stylesheet" href="/css/lavish.css"/>-->
 
     <!-- Custom styles for this template -->
     <link href="http://getbootstrap.com/examples/dashboard/dashboard.css" rel="stylesheet">
@@ -54,9 +55,9 @@
                 <div class="row">
                     <div class="col-sm-3 col-md-2 sidebar">
                         <ul class="nav nav-sidebar">
-                            <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a>
+                            <li data-bind="css : {active : viewCurrent}"><a href="#" data-bind="click : setCurrent">Current</a>
                             </li>
-                            <li><a href="#">Reports</a>
+                            <li data-bind="css : {active : !viewCurrent()}"><a href="#" data-bind="click : setArchived">Historical</a>
                             </li>
                             <li><a href="#">Analytics</a>
                             </li>
@@ -84,7 +85,7 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="col-sm-9 col-sm-offset-3 col-md-8 col-md-offset-2 main">
+                    <div class="col-sm-9 col-md-8  " style="margin-left : 10.3%">
                         <div class="row placeholders">
                             <div class="col-xs-6 col-sm-3 placeholder">
 
@@ -107,7 +108,7 @@
                                         <th>Verified</th>
                                     </tr>
                                 </thead>
-                                <tbody data-bind="foreach : receipts">
+                                <tbody data-bind="foreach : viewedReceipts	">
                                     <tr class="receipt">
                                         <td data-bind="text : $index"></td>
                                         <td data-bind="text : amount"></td>
@@ -120,10 +121,10 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <button id="huehue">Pay</button>
+                            <button class="btn btn-info" id="huehue">Pay</button>
                         </div>
                     </div>
-                    <div class="col-md-2 ">
+                    <div class="col-md-2 " style="margin-left:4%; margin-top:4%">
                     	<div id="pie"></div>
                     	<div id="line"></div>
                     </div>
@@ -162,7 +163,7 @@
 
                 $('#line').highcharts({
                     chart: {
-                        width: 250,
+                        width: 300,
                         height: 200
                     },
                     legend : {
@@ -203,7 +204,7 @@
                         plotBackgroundColor: null,
                         plotBorderWidth: 1, //null,
                         plotShadow: false,
-                        width: 250,
+                        width: 300,
                         height: 200
                     },
                     title: {
@@ -242,9 +243,22 @@
                     toggleVerified: function(obj) {
                         $.post('/toggleVerified', obj);
                         return true;
-                    }
-
+                    },
+                    setCurrent : function(){
+                    	this.viewCurrent(true);
+                    },
+                    setArchived : function(){
+                    	this.viewCurrent(false);
+                    },
+                    viewCurrent : ko.observable(true)
                 };
+                viewModel.viewedReceipts = ko.computed(function(){
+                	var val = this();
+                	return viewModel.receipts().filter(function(e){
+                		return e.archived != val;
+                	})
+                },viewModel.viewCurrent);
+
                 ko.computed(function() {
                     var user = this();
                     if (user.length == 0) {
@@ -271,7 +285,7 @@
                 $('#huehue').on('click', function() {
                     var sum = 0;
                     var fuckyousum = .01;
-                    viewModel.receipts().forEach(function(element) {
+                    viewModel.viewedReceipts().forEach(function(element) {
                         if (element.verified() == true) {
                             sum += element.amount;
                         }
