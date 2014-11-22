@@ -25,7 +25,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Project name</a>
+          <a class="navbar-brand" href="#">Ricipt</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
@@ -120,23 +120,16 @@
 $(document).ready(function(){
    $('#line').highcharts({
    		chart : {
-   			width:400, height:200
+   			width:600, height:200
    		},
         title: {
-            text: 'Monthly Average Temperature',
+            text: 'Spending Rate',
             x: -20 //center
         },
-        subtitle: {
-            text: 'Source: WorldClimate.com',
-            x: -20
-        },
-        xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-        },
+
         yAxis: {
             title: {
-                text: 'Temperature (°C)'
+                text: 'Amount'
             },
             plotLines: [{
                 value: 0,
@@ -154,7 +147,7 @@ $(document).ready(function(){
             borderWidth: 0
         },
         series: [{
-            name: 'Tokyo',
+            name: 'Set 1',
             data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
         }]
     });
@@ -195,7 +188,7 @@ $(document).ready(function(){
         }]
     });
 	var viewModel = {
-		user : ko.observable(""), 
+		user : ko.observable("17148673981"), 
 		receipts : ko.observableArray([])
 	};
 	ko.computed(function(){
