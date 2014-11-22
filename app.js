@@ -83,12 +83,20 @@ if ('development' == app.get('env')) {
 
 // Add routes here
 app.get('/', function(req, res) {
+    if (req.cookies.user == undefined || req.cookies.pass == undefined){
+        res.render('login'); 
+    }
+    else
+    {
+        res.render('index'); 
+    }
+    /*
 	if(req.query['error']) {
 		res.send(req.query['error']); 
 	}  else {
 		access_token = req.query['access_token'];
 		res.render('index');
-	}
+    }*/ 
 });
 app.get('/login', login.view); 
 //get rceipt via phone number
@@ -125,6 +133,10 @@ app.get('/url', function(req, res) {
 
 //login stuff and validation
 app.post("/login", function(req, res){    
+    validateLogin(req, res);    
+}); 
+
+var validateLogin  = function(req, res){
     var fields = req.body;     
     var username = req.body.users; 
     console.log(username); 
@@ -133,7 +145,9 @@ app.post("/login", function(req, res){
         if(data[0].password == fields.password)
         {            
             //res.send("SUCCESS"); 
-            res.send({
+            res.cookie('user', data[0].users, { maxAge: 900000 });
+	        res.cookie('pass', data[0].password, { maxAge: 900000 });
+            res.send({  
               retStatus : "Success",
               redirectTo: '/',
               msg : 'Just go there please' // this should help
@@ -143,7 +157,7 @@ app.post("/login", function(req, res){
             res.send("FAIL");         
         res.end(); 
     });     
-}); 
+}
 
 app.post("/message", function(req,res){
 	var data = req.body;
