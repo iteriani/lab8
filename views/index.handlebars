@@ -50,11 +50,9 @@
                             </li>
                             <li data-bind="css : {active : !viewCurrent()}"><a href="#" data-bind="click : setArchived">Historical</a>
                             </li>
-                            <li><a href="#">Analytics</a>
-                            </li>
-                            <li><a href="#">Export</a>
-                            </li>
-                        </ul>                       
+                        </ul>
+                        <hr>
+              
                         ACCOUNTS: 
                         <!-- should indent these things --> 
                         <ul class="nav nav-sidebar" data-bind="foreach: childAccs">                            
@@ -63,7 +61,7 @@
                         <ul class="nav nav-sidebar">
                             <li>                            
                                 <form data-bind="submit: addAccount">
-                                    <input type="text" class="form-control" data-bind="value : newChild" placeholder="username" name="users">
+                                    <input type="text" class="form-control" data-bind="value : newChild" placeholder="Phone Number" name="users">
                                     </br>
                                     <button class="btn btn-info" type="submit">Add</button>
                                 </form>
@@ -175,7 +173,7 @@
                     percentage : ko.observable(10),
                     viewCurrent : ko.observable(true),
                     quota : ko.observable(100),
-                    currChild: ko.observable(""),
+                    currChild: ko.observable("tomo"),
                     childAccs: ko.observableArray([]),
                     showReceipt : function(elem) { if (elem.nodeType === 1) $(elem).hide().slideDown() },
                     newChild: ko.observable()

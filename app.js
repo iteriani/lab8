@@ -241,7 +241,8 @@ app.post('/account', function(req, res){
                 phoneNumbers.findOne({ phoneNumber : req.body.child}, function(err, retData){                                                            
                     if(data.childAccounts.indexOf(retData.account) < 0)
                     {
-                       data.childAccounts.push(retData.account); 
+                       data.childAccounts.push(retData.account);
+                       res.send(retData.account); 
                        data.save(); 
                     }
                 }); 
