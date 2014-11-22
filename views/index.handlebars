@@ -50,11 +50,8 @@
                             </li>
                             <li data-bind="css : {active : !viewCurrent()}"><a href="#" data-bind="click : setArchived">Historical</a>
                             </li>
-                            <li><a href="#">Analytics</a>
-                            </li>
-                            <li><a href="#">Export</a>
-                            </li>
                         </ul>
+                        <hr>
                         <ul class="nav nav-sidebar">
                             <li><a href="">Nav item</a>
                             </li>
@@ -182,8 +179,7 @@
                     viewCurrent : ko.observable(true),
                     quota : ko.observable(100),
                     currChild: ko.observable(""),
-                    childAccs: ko.observableArray([]),
-                    showReceipt : function(elem) { if (elem.nodeType === 1) $(elem).hide().slideDown() }
+                    childAccs: ko.observableArray([])
                 };
 
                 ko.bindingHandlers.fadeVisible = {
