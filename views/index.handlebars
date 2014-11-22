@@ -217,7 +217,7 @@ $(document).ready(function(){
 		var sum = 0;
 		var fuckyousum = .01;
 		viewModel.receipts().forEach(function(element) {
-			if(element.verified() == true) {
+			if(element.verified == true) {
 				sum += element.amount;
 			}
 
