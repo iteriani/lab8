@@ -1,0 +1,40 @@
+<html>
+<head>
+	<title>Tax Return Login</title>	
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">	
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
+<head>
+Please Log In
+<form data-bind="submit: doSomething">
+    <input type="text" class="form-control" data-bind="value : user" placeholder="username" name="users">
+    </br>
+    </br>
+    <input type="text" class="form-control" data-bind="value : password" placeholder="password" name="password">
+    </br>
+    </br>
+    <button type="submit">Submit</button>
+</form>
+ 
+<script type="text/javascript">
+    var viewModel = new function()
+    {
+        var self = this;    
+        self.user = ko.observable("username");
+        self.password = ko.observable("password");
+        self.doSomething = function() {
+        var data =
+        {
+            users : self.user(),
+            password : self.password()        
+        };
+        $.post("/login/", data, function(returnedData) {
+            console.log(returnedData);
+            if(returnedData.retStatus == "Success")
+                window.location = "/"; 
+        });
+        }
+    }
+    ko.applyBindings(viewModel);  
+</script>
