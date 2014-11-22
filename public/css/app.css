@@ -32,9 +32,13 @@ body, html, form {
 }
 
 .top-offset {
-	margin-top: 25%;
+	margin-top: 3%;
 }
 
 #logo {
 	z-index: 5;
+}
+
+.pusheen {
+	border: 1px solid black;
 }
