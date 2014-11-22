@@ -65,7 +65,7 @@ app.get("/message/:phone", function(req,res){
 });
 
 app.get('/url', function(req, res) {
-	res.send(req.query('venmo_challenge'));
+	res.send(req.query['venmo_challenge']);
 });
 
 app.post("/message", function(req,res){
