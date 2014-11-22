@@ -7,9 +7,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/css/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/app.css">
     <link rel="stylesheet" href="./css/alertify.default.css">
     <link rel="stylesheet" href="./css/alertify.core.css">
-   <!-- <link href="/css/bootstrap-theme.min.css" rel="stylesheet">-->
+    <!-- <link href="/css/bootstrap-theme.min.css" rel="stylesheet">-->
     <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/highcharts-more.js"></script>
@@ -18,31 +19,42 @@
     <script src="https://cdn.socket.io/socket.io-1.2.1.js"></script>
     <script src="./js/alertify.js"></script>
     <script src="js/bootstrap.min.js"></script>
-   <!-- <link rel="stylesheet" href="/css/lavish.css"/>-->
+    <!-- <link rel="stylesheet" href="/css/lavish.css"/>-->
 
     <!-- Custom styles for this template -->
     <link href="http://getbootstrap.com/examples/dashboard/dashboard.css" rel="stylesheet">
 
     <head>
+        <div id="home-background">
+            <div id="home-opacity">
+
+            </div>
+        </div>
 
         <body class="container">
-            <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-                <div class="container-fluid">
-                    <div class="navbar-header">
-                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
-                        <a class="navbar-brand" href="#">Receives &nbsp ✓</i></a>
-                    </div>
-                    <div lass="navbar-collapse collapse">
-                    </div>
-                    <!-- MAKE THIS SHOW UP TOO --> 
-                    <ul class="nav navbar-nav navbar-right">
-                        Currently logged in as
-                        <span data-bind="text: user"></span>
+            <div class="row">
+                <div style="background-color: white; border: 1px solid black" class="col-sm-3 col-md-2 sidebar">
+                    <ul class="nav nav-sidebar">
+                        <li data-bind="css : {active : viewCurrent}"><a href="#" data-bind="click : setCurrent">Current</a>
+                        </li>
+                        <li data-bind="css : {active : !viewCurrent()}"><a href="#" data-bind="click : setArchived">Archived</a>
+                        </li>
+                    </ul>
+                    <hr> ACCOUNTS:
+                    <!-- should indent these things -->
+                    <ul class="nav nav-sidebar" data-bind="foreach: childAccs">
+                        <li>
+                            <a href="" data-bind="click: $parent.changeChild, text: $data, attr: { id: $data }"></a>
+                        </li>
+                    </ul>
+                    <ul class="nav nav-sidebar">
+                        <li>
+                            <form data-bind="submit: addAccount">
+                                <input type="text" class="form-control" data-bind="value : newChild" placeholder="Phone Number" name="users">
+                                </br>
+                                <button class="btn btn-info" type="submit">Add</button>
+                            </form>
+                        </li>
                     </ul>
                 </div>
             </nav>
@@ -81,74 +93,77 @@
                             <div class="col-xs-6 col-sm-3 placeholder">
 
                             </div>
+                <div id="stuff" class="col-sm-9 col-md-8 col-lg-8" style="background-color: white; margin-left:11%; border: 1px solid black;">
+                    <div class="row placeholders">
+                        <div class="col-xs-6 col-sm-3 placeholder">
 
                         </div>
-                            
-                        <!--<div class="dropdown">
-                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
-                                Accounts
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1" data-bind="foreach: childAccs">                            
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-bind="text: $data"></a></li>
-                            </ul>
-                        </div>--> 
-                        <h2 class="sub-header">Transactions </h2>                        
-                        <button class="btn btn-info" id="huehue">Pay using Venmo</button>
-                        <input data-bind="value : percentage" style="width:10%"></input> %
-                        <!-- SAM MAKE THIS PRETTY --> 
-                        <div data-bind="text: currChild"></div> 
-                        <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Amount</th>
-                                        <th>Date</th>
-                                        <th>ImageURL</th>
-                                        <th>Verified</th>
-                                    </tr>
-                                </thead>
-                                <tbody data-bind="foreach : receipts, afterAdd : showReceipt">
-                                    <tr class="receipt" data-bind="visible : archived() != $parent.viewCurrent()"> 
-                                        <td data-bind="text : id"></td>
-                                        <td data-bind="text : amount"></td>
-                                        <td data-bind="text : new Date(date).toDateString()"></td>
-                                        <td><a target="_blank" data-bind="attr : {href : receiptURL}">Receipt Link</a>
-                                        </td>
-                                        <td>
-                                            <input type="checkbox" data-bind="checked : verified, click : $parent.toggleVerified" class="form-control">
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                           
+                        <div class="col-xs-6 col-sm-3 placeholder">
+
                         </div>
-                    </div>
-                    <div class="col-md-2 " style="margin-left:4%; margin-top:4%">
-                    	<div id="pie"></div>
-                    	<div id="line"></div>
-                    	<img src="./images/pusheen.png" alt="">
+
                     </div>
 
+                    <!--<div class="dropdown">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                            Accounts
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1" data-bind="foreach: childAccs">                            
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-bind="text: $data"></a></li>
+                        </ul>
+                    </div>-->
+                    <h2 class="sub-header">Transactions </h2>
+                    <button class="btn btn-info" id="huehue">Pay using Venmo</button>
+                    <input data-bind="value : percentage" style="width:10%"></input> %
+                    <!-- SAM MAKE THIS PRETTY -->
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Amount</th>
+                                    <th>Date</th>
+                                    <th>ImageURL</th>
+                                    <th>Verified</th>
+                                </tr>
+                            </thead>
+                            <tbody data-bind="foreach : receipts, afterAdd : showReceipt">
+                                <tr class="receipt" data-bind="visible : archived() != $parent.viewCurrent()">
+                                    <td data-bind="text : id"></td>
+                                    <td data-bind="text : amount"></td>
+                                    <td data-bind="text : new Date(date).toDateString()"></td>
+                                    <td><a target="_blank" data-bind="attr : {href : receiptURL}">Receipt Link</a>
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" data-bind="checked : verified, click : $parent.toggleVerified" class="form-control">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+                <div class="col-md-2 ">
+                    <div id="pie"></div>
+                    <div id="line"></div>
+                    <img src="./images/pusheen.png" alt="">
                 </div>
             </div>
-
-            <!--
-	<div id="body">
-		<input data-bind="value : user"></input>
-		<table class="table" data-bind="foreach : receipts">
-			<tr>
-				<td data-bind="text : amount"></td>
-				<td data-bind="text : date"></td>
-				<td><a target="_blank" data-bind="attr : {href : receiptURL}">Receipt Link</a></td>
-			</tr>
-		</table>
-	</div>-->
         </body>
 
         <script>
             $(document).ready(function() {
+
+                $('#home-background').css({
+                    height: screen.height,
+                    width: screen.width
+                });
+
+                $('#stuff').css({
+                    height: screen.height
+                });
+
                 var socket = io(document.URL);
 
                 socket.on('update', function(data) {
@@ -159,8 +174,8 @@
                         $('.alertify-message').append($.parseHTML('<img src="' + data.imageLink + '" alt="" />'));
                     } else if (data.message == 'processing') {
                         alertify.log('Now doing analysis of receipt sent from ' + data.phoneNumber);
-                    } else if(data.message == 'done') {
-                    	alertify.success('Done processing from ' + data.phoneNumber)
+                    } else if (data.message == 'done') {
+                        alertify.success('Done processing from ' + data.phoneNumber)
                     }
                 });
                 var viewModel = {
@@ -171,18 +186,20 @@
                         $.post('/toggleVerified', ko.toJS(obj));
                         return true;
                     },
-                    setCurrent : function(){
-                    	this.viewCurrent(true);
+                    setCurrent: function() {
+                        this.viewCurrent(true);
                     },
-                    setArchived : function(){
-                    	this.viewCurrent(false);
+                    setArchived: function() {
+                        this.viewCurrent(false);
                     },
-                    percentage : ko.observable(10),
-                    viewCurrent : ko.observable(true),
-                    quota : ko.observable(100),
+                    percentage: ko.observable(10),
+                    viewCurrent: ko.observable(true),
+                    quota: ko.observable(100),
                     currChild: ko.observable(),
                     childAccs: ko.observableArray([]),
-                    showReceipt : function(elem) { if (elem.nodeType === 1) $(elem).hide().slideDown() },
+                    showReceipt: function(elem) {
+                        if (elem.nodeType === 1) $(elem).hide().slideDown()
+                    },
                     newChild: ko.observable()
                 };                
                 
@@ -198,7 +215,7 @@
                     childAccs[index] = temp; 
                     viewModel.childAccs(childAccs);                     
                 });
-                
+
                 ko.bindingHandlers.fadeVisible = {
                     init: function(element, valueAccessor) {
                         // Initially set the element to be instantly visible/hidden depending on the value
@@ -213,13 +230,13 @@
                 };
 
                 socket.on('item', function(data) {
-                	data.verified = ko.observable(data.verified);
-                	data.archived = ko.observable(data.archived);
-                	viewModel.receipts().forEach(function(item){
-                		item.id(item.id()+1);
-                	});
-                	data.id = ko.observable(1);
-                	viewModel.receipts.unshift(data);
+                    data.verified = ko.observable(data.verified);
+                    data.archived = ko.observable(data.archived);
+                    viewModel.receipts().forEach(function(item) {
+                        item.id(item.id() + 1);
+                    });
+                    data.id = ko.observable(1);
+                    viewModel.receipts.unshift(data);
                 });
                 
               viewModel.changeChild = function(child){
@@ -244,7 +261,7 @@
             //get the receipts for the currently selected child account
                 ko.computed(function(){
                     var currChild = this();
-                    if(!currChild){
+                    if (!currChild) {
                         viewModel.currChild(viewModel.userName());
                         viewModel.receipts([]);                        
                     }
@@ -253,29 +270,29 @@
                         if(currChild == "My Account")
                         {                            
                             currChild = viewModel.user(); 
-                        }                    
+                        }            
                         $.get("/account/" + currChild, function(account){                            
                             $.get("/message/" + account[0].phoneNumber, function(data){                                                
                                 data = data.reverse();
                                 var id = 1;
-                                data.forEach(function(elem){					
-                                   elem.verified = ko.observable(elem.verified);
-                            	   elem.archived = ko.observable(elem.archived);
-                            	   elem.id = ko.observable(id++);
-                                });                       
-                                viewModel.receipts(data);   
-                                var expenses = viewModel.receipts().filter(function(e){
-                                   return e.archived() == false;
+                                data.forEach(function(elem) {
+                                    elem.verified = ko.observable(elem.verified);
+                                    elem.archived = ko.observable(elem.archived);
+                                    elem.id = ko.observable(id++);
                                 });
-                                 generateLineChart(expenses);
+                                viewModel.receipts(data);
+                                var expenses = viewModel.receipts().filter(function(e) {
+                                    return e.archived() == false;
+                                });
+                                generateLineChart(expenses);
                                 generatePieChart(expenses, viewModel.quota());
                             });
-                        });                     
+                        });
                     }
-                },viewModel.currChild);   
+                }, viewModel.currChild);
 
                 //get the children of this account
-                ko.computed(function(){
+                ko.computed(function() {
                     var user = this();
                     if(!user){
                         viewModel.childAccs([]);
@@ -287,86 +304,88 @@
                             viewModel.userName(data[0].account); //for dashboard for currently logged in user
                         });
                     }
-                },viewModel.user);             
+                }, viewModel.user);
 
 
-                $(function(){
-                    $(".dropdown-menu").on('click', 'li a', function(){
-                      $(".btn:first-child").text($(this).text());          
-                      viewModel.currChild($(this).text());             
-                      $(".btn:first-child").html($(this).text()+" <span class=\"caret\"></span>");            
-                   });
-                });                                
+                $(function() {
+                    $(".dropdown-menu").on('click', 'li a', function() {
+                        $(".btn:first-child").text($(this).text());
+                        viewModel.currChild($(this).text());
+                        $(".btn:first-child").html($(this).text() + " <span class=\"caret\"></span>");
+                    });
+                });
 
                 ko.applyBindings(viewModel, document.getElementById("body"));
 
                 $('#huehue').on('click', function() {
                     var sum = 0;
-                    var fuckyousum = .01;                    
+                    var fuckyousum = .01;
                     viewModel.receipts().forEach(function(element) {
                         if (element.verified() == true && element.archived() == false) {
                             sum += element.amount;
                             element.archived(true);
-                      //      $.post("/toggleArchived", ko.toJS(element));
+                            //      $.post("/toggleArchived", ko.toJS(element));
                         }
 
                     });
                     var percentage = parseFloat(viewModel.percentage());
-                    var paidValue = (sum*percentage/100).toPrecision(2);
+                    var paidValue = (sum * percentage / 100).toPrecision(2);
                     window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=' + fuckyousum + '&note=cantstopbacon&audience=private');
                     //window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=.01&note=faggot&audience=private');
                 });
 
             });
 
-function generateLineChart(data){
-    var nums = data.map(function(e){
-        return e.amount;
-    })
-    $('#line').highcharts({
-        chart: {
-            width: 300,
-            height: 200
-        },
-        legend : {
+            function generateLineChart(data) {
+                var nums = data.map(function(e) {
+                    return e.amount;
+                })
+                $('#line').highcharts({
+                    chart: {
+                        width: 300,
+                        height: 200
+                    },
+                    legend: {
 
-        },
-        title: {
-            text: 'Spending Rate',
-            x: -20 //center
-        },
+                    },
+                    title: {
+                        text: 'Spending Rate',
+                        x: -20 //center
+                    },
 
-        yAxis: {
-            title: {
-                text: 'Amount'
-            },
-            plotLines: [{
-                value: 0,
-                width: 1,
-                color: '#808080'
-            }]
-        },
-        legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'middle',
-            borderWidth: 0,
-            enabled : false
-        },
-         credits: {
-        enabled: false
-        },
-        series: [{
-            name: 'Set 1',
-            data: nums
-        }]
-    });
-}
+                    yAxis: {
+                        title: {
+                            text: 'Amount'
+                        },
+                        plotLines: [{
+                            value: 0,
+                            width: 1,
+                            color: '#808080'
+                        }]
+                    },
+                    legend: {
+                        layout: 'vertical',
+                        align: 'right',
+                        verticalAlign: 'middle',
+                        borderWidth: 0,
+                        enabled: false
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    series: [{
+                        name: 'Set 1',
+                        data: nums
+                    }]
+                });
+            }
 
-function generatePieChart(data, quota){
-	var d1 = ['Used', 100*((data.reduce(function(prev,curr){return prev + curr.amount},0))/quota)];
-	var d2 = ['Left',  100 - d1[1]];
-	                $('#pie').highcharts({
+            function generatePieChart(data, quota) {
+                var d1 = ['Used', 100 * ((data.reduce(function(prev, curr) {
+                    return prev + curr.amount
+                }, 0)) / quota)];
+                var d2 = ['Left', 100 - d1[1]];
+                $('#pie').highcharts({
                     chart: {
                         plotBackgroundColor: null,
                         plotBorderWidth: 1, //null,
@@ -374,9 +393,9 @@ function generatePieChart(data, quota){
                         width: 300,
                         height: 200
                     },
-                     credits: {
-      enabled: false
-  },
+                    credits: {
+                        enabled: false
+                    },
                     title: {
                         text: 'Usage'
                     },
@@ -399,15 +418,13 @@ function generatePieChart(data, quota){
                     series: [{
                         type: 'pie',
                         name: 'Usage',
-                        data: [d1
-                           ,	d2
-                            
+                        data: [d1, d2
+
                         ]
                     }]
                 });
 
-}
-
+            }
         </script>
 
 </html>

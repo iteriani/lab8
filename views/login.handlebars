@@ -22,7 +22,33 @@
         </div>
         <div class="row text-center">
             <div class="col-lg-12">
-                <h3>Nurturing responsibility through early engagement.</h3>
+                <h2>Nurturing responsibility through early engagement.</h2>
+            </div>
+        </div>
+        <div class="row text-center">
+            <div class="col-lg-4">
+                <div class="row">
+                    <img class="pusheen" height="160" width="160" src="./images/pusheen-buy.png" alt="">
+                </div>
+                <div class="row">
+                   <h3> <span class="label label-primary">Make a purchase.</span></h3>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="row">
+                    <img class="pusheen" height="160" width="160"src="./images/pusheen-phone.png" alt="">
+                </div>
+                <div class="row">
+                    <h3> <span class="label label-primary">Text the receipt.</span></h3>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="row">
+                    <img class="pusheen" height="160" width="160"src="./images/pusheen-money.png" alt="">
+                </div>
+                <div class="row">
+                    <h3> <span class="label label-primary">Get your cash.</span></h3>
+                </div>
             </div>
         </div>
         <div class="row text-center">
@@ -67,9 +93,8 @@
             password : self.password()        
         };
         $.post("/login/", data, function(returnedData) {            
-            if(returnedData == "Success")
-                console.log(returnedData);
-                location.reload( true ); 
+            window.location = "/";
+
         });
         }
     }

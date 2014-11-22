@@ -32,9 +32,35 @@ body, html, form {
 }
 
 .top-offset {
-	margin-top: 25%;
+	margin-top: 3%;
 }
 
 #logo {
 	z-index: 5;
+}
+
+.pusheen {
+	border: 1px solid black;
+}
+
+#home-background {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 0;
+	background-image: url('http://3.bp.blogspot.com/-ZGcSEyIMoVM/ToZk-4NpSII/AAAAAAAAAV0/1fbFQudqZdg/s1600/tree-minimalism.jpg');
+	background-size: 100% 100%;
+
+}
+
+#home-opacity {
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	z-index: 1;
+	background-color: white;
+	opacity: 0.3;
+
 }
