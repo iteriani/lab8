@@ -34,6 +34,8 @@
         <body class="container">
             <div class="row">
                 <div style="background-color: white; border: 1px solid black" class="col-sm-3 col-md-2 sidebar">
+                	<img src="./images/logo.png" width="100" height="75"/>
+                	<hr>
                     <ul class="nav nav-sidebar">
                         <li data-bind="css : {active : viewCurrent}"><a href="#" data-bind="click : setCurrent">Current</a>
                         </li>
@@ -110,6 +112,7 @@
                 </div>
                 <div class="col-md-2 ">
                     <div id="pie"></div>
+                    <br>
                     <div id="line"></div>
                     <img src="./images/pusheen.png" alt="">
                 </div>
@@ -195,6 +198,11 @@
                     });
                     data.id = ko.observable(1);
                     viewModel.receipts.unshift(data);
+                    var expenses = viewModel.receipts().filter(function(e) {
+                        return e.archived() == false;
+                    });
+                    generateLineChart(expenses);
+                    generatePieChart(expenses, viewModel.quota());
                 });
 
                 viewModel.changeChild = function(child) {
@@ -273,7 +281,7 @@
                         if (element.verified() == true && element.archived() == false) {
                             sum += element.amount;
                             element.archived(true);
-                            //      $.post("/toggleArchived", ko.toJS(element));
+                                  $.post("/toggleArchived", ko.toJS(element));
                         }
 
                     });
@@ -292,7 +300,10 @@
                 $('#line').highcharts({
                     chart: {
                         width: 300,
-                        height: 200
+                        height: 200,
+                        borderColor : 'black',
+                                    borderRadius: 20,
+            borderWidth: 1
                     },
                     legend: {
 
@@ -340,7 +351,10 @@
                         plotBorderWidth: 1, //null,
                         plotShadow: false,
                         width: 300,
-                        height: 200
+                        height: 200,
+                        borderColor : 'black',
+                                    borderRadius: 20,
+            borderWidth: 1,
                     },
                     credits: {
                         enabled: false
