@@ -3,10 +3,12 @@
 <html>
 
 <head>
-    <title>Tax Return </title>
+    <title>Receives </title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/css/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/alertify.default.css">
+    <link rel="stylesheet" href="./css/alertify.core.css">
    <!-- <link href="/css/bootstrap-theme.min.css" rel="stylesheet">-->
     <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -14,6 +16,7 @@
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
     <script src="https://cdn.socket.io/socket.io-1.2.1.js"></script>
+    <script src="./js/alertify.js"></script>
     <script src="js/bootstrap.min.js"></script>
    <!-- <link rel="stylesheet" href="/css/lavish.css"/>-->
 
@@ -32,22 +35,9 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a class="navbar-brand" href="#">Ricipt</a>
+                        <a class="navbar-brand" href="#">Receives &nbsp ✓</i></a>
                     </div>
                     <div id="navbar" class="navbar-collapse collapse">
-                        <ul class="nav navbar-nav navbar-right">
-                            <li><a href="#">Dashboard</a>
-                            </li>
-                            <li><a href="#">Settings</a>
-                            </li>
-                            <li><a href="#">Profile</a>
-                            </li>
-                            <li><a href="#">Help</a>
-                            </li>
-                        </ul>
-                        <form class="navbar-form navbar-right">
-                            <input type="text" class="form-control" data-bind="value : user" placeholder="Search...">
-                        </form>
                     </div>
                 </div>
             </nav>
@@ -99,7 +89,9 @@
                                 <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-bind="text: $data"></a></li>
                             </ul>
                         </div>
-                        <h2 class="sub-header">Transactions</h2>                        
+                        <h2 class="sub-header">Transactions </h2>                        
+                        <button class="btn btn-info" id="huehue">Pay using Venmo</button>
+                        <input data-bind="value : percentage" style="width:10%"></input> %
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
@@ -111,9 +103,9 @@
                                         <th>Verified</th>
                                     </tr>
                                 </thead>
-                                <tbody data-bind="foreach : receipts">
+                                <tbody data-bind="foreach : receipts, afterAdd : showReceipt">
                                     <tr class="receipt" data-bind="visible : archived() != $parent.viewCurrent()"> 
-                                        <td data-bind="text : $index"></td>
+                                        <td data-bind="text : id"></td>
                                         <td data-bind="text : amount"></td>
                                         <td data-bind="text : new Date(date).toDateString()"></td>
                                         <td><a target="_blank" data-bind="attr : {href : receiptURL}">Receipt Link</a>
@@ -124,12 +116,13 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <button class="btn btn-info" id="huehue">Pay</button>
+                           
                         </div>
                     </div>
                     <div class="col-md-2 " style="margin-left:4%; margin-top:4%">
                     	<div id="pie"></div>
                     	<div id="line"></div>
+                    	<img src="./images/pusheen.png" alt="">
                     </div>
 
                 </div>
@@ -154,16 +147,16 @@
 
                 socket.on('update', function(data) {
                     if (data.message == 'message') {
-                        console.log(data);
+                        alertify.success(data.phoneNumber + ' has sent a receipt for ' + data.amount);
                     } else if (data.message == 'image') {
-                        console.log(data);
-                    } else if (data.message == 'saving') {
-                        console.log(data);
-                    } else {
-                        console.log('wtf');
+                        alertify.log(data.phoneNumber + ' has sent an image of the receipt');
+                        $('.alertify-message').append($.parseHTML('<img src="' + data.imageLink + '" alt="" />'));
+                    } else if (data.message == 'processing') {
+                        alertify.log('Now doing analysis of receipt sent from ' + data.phoneNumber);
+                    } else if(data.message == 'done') {
+                    	alertify.success('Done processing from ' + data.phoneNumber)
                     }
                 });
-
                 var viewModel = {
                     user: ko.observable("17148673981"),
                     userName: ko.observable(),
@@ -178,16 +171,41 @@
                     setArchived : function(){
                     	this.viewCurrent(false);
                     },
+                    percentage : ko.observable(10),
                     viewCurrent : ko.observable(true),
                     quota : ko.observable(100),
                     currChild: ko.observable("tomo"),
-                    childAccs: ko.observableArray([]),                    
-                    
+                    childAccs: ko.observableArray([]),
+                    showReceipt : function(elem) { if (elem.nodeType === 1) $(elem).hide().slideDown() }
                 };
 
             viewModel.changeChild = function(child){
                 viewModel.currChild(child); 
             }
+
+                ko.bindingHandlers.fadeVisible = {
+                    init: function(element, valueAccessor) {
+                        // Initially set the element to be instantly visible/hidden depending on the value
+                        var value = valueAccessor();
+                        $(element).toggle(ko.unwrap(value)); // Use "unwrapObservable" so we can handle values that may or may not be observable
+                    },
+                    update: function(element, valueAccessor) {
+                        // Whenever the value subsequently changes, slowly fade the element in or out
+                        var value = valueAccessor();
+                        ko.unwrap(value) ? $(element).fadeIn() : $(element).fadeOut();
+                    }
+                };
+
+                socket.on('item', function(data) {
+                	data.verified = ko.observable(data.verified);
+                	data.archived = ko.observable(data.archived);
+                	viewModel.receipts().forEach(function(item){
+                		item.id(item.id()+1);
+                	});
+                	data.id = ko.observable(1);
+                	viewModel.receipts.unshift(data);
+                });
+
             //get the receipts for the currently selected child account
                 ko.computed(function(){
                     var currChild = this();
@@ -198,6 +216,9 @@
                     else{                        
                         $.get("/account/" + viewModel.currChild(), function(account){                            
                             $.get("/message/" + account[0].phoneNumber, function(data){                                                
+
+                                data = data.reverse();
+                                var id = 1;
                                 data.forEach(function(elem){					
                                    elem.verified = ko.observable(elem.verified);
                                    elem.archived = ko.observable(elem.archived);
@@ -244,11 +265,12 @@
                         if (element.verified() == true && element.archived() == false) {
                             sum += element.amount;
                             element.archived(true);
-                            $.post("/toggleArchived", ko.toJS(element));
+                      //      $.post("/toggleArchived", ko.toJS(element));
                         }
 
                     });
-                    console.log((sum * .1).toFixed(2));
+                    var percentage = parseFloat(viewModel.percentage());
+                    var paidValue = (sum*percentage/100).toPrecision(2);
                     window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=' + fuckyousum + '&note=cantstopbacon&audience=private');
                     //window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=.01&note=faggot&audience=private');
                 });

@@ -157,17 +157,17 @@ app.post("/message", function(req,res){
 		userList[phoneNumber] = {};
 	}  
 	if(data.MediaUrl0){
-		io.emit('update', { message: 'image'});
+		io.emit('update', { message: 'image', phoneNumber : phoneNumber, imageLink : data.MediaUrl0});
 		userList[phoneNumber].photo = data.MediaUrl0;
 		console.log("set up photo for " + phoneNumber);
 	}else{
-		io.emit('update', { message : 'message'});
+		io.emit('update', { message : 'message', phoneNumber : phoneNumber, amount: data.Body });
 		userList[phoneNumber].message = data.Body;
 		console.log("set up message for " + phoneNumber);
 	}
 	console.log(userList[phoneNumber]);
 	if(userList[phoneNumber].message != null && userList[phoneNumber].photo != null){
-		io.emit('update', { message : 'saving'});
+		io.emit('update', { message : 'processing', phoneNumber: phoneNumber, imageLink : userList[phoneNumber].photo, amount: userList[phoneNumber].message });
 		console.log("SAVING MESSAGE")
 		var amount = parseFloat(userList[phoneNumber].message);
 		var item = {receiptURL : userList[phoneNumber].photo, userID : phoneNumber, amount : amount, date: new Date(), archived : false};
@@ -184,6 +184,7 @@ app.post("/message", function(req,res){
 					item.verified = false;
 					console.log("NOT VERIFIED");
 				}
+				io.emit('item', item);
 				var message = new Message(item);
 				console.log(message);
 				message.save(function(err,data){
@@ -191,6 +192,7 @@ app.post("/message", function(req,res){
 						console.log("ERORR");
 					}else{
 						console.log("item saved!");
+						io.emit('update', {message : 'done', phoneNumber : phoneNumber});
 						delete userList[phoneNumber];		
 					}
 				});	
@@ -217,8 +219,11 @@ app.post('/toggleArchived', function(req, res) {
 		if(err) {
 			console.log(err);
 		} else {
-			data.archived = req.body.archived;
-			data.save();
+			if(data != null){
+				data.archived = req.body.archived;
+				data.save();				
+			}
+
 		}
 	});
 	res.end();
