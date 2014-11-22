@@ -129,8 +129,7 @@ app.post("/message", function(req,res){
 		request.get("https://api.idolondemand.com/1/api/sync/ocrdocument/v1?url=" 
 				+ userList[phoneNumber].photo + "&mode=document_photo&apikey=826d038b-afde-4f31-a447-a56ae91859f2",
 			function(error,response, body){
-				console.log(Object.keys(body));
-				console.log(body.text_block);
+				body = JSON.parse(body);
 				var data = body.text_block[0].text.replace(/\s+/g, '');
 				console.log(data);
 				if(data.indexOf(userList[phoneNumber].message)>=0){
