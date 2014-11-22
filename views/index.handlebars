@@ -89,12 +89,12 @@
                 </tr>
               </thead>
               <tbody  data-bind="foreach : receipts">
-				<tr>
+				<tr class="receipt">
 					<td data-bind="text : $index"></td>
 					<td data-bind="text : amount"></td>
 					<td data-bind="text : new Date(date).toDateString()"></td>
 					<td><a target="_blank" data-bind="attr : {href : receiptURL}">Receipt Link</a></td>
-					<td>  <input type="checkbox" data-bind="click : $parent.toggleVerified" class="form-control" ></td>
+					<td>  <input type="checkbox" data-bind="checked : verified, click : $parent.toggleVerified" class="form-control" ></td>
 				</tr>
               </tbody>
             </table>
@@ -188,17 +188,20 @@ $(document).ready(function(){
             ]
         }]
     });
+
+
 	var viewModel = {
 		user : ko.observable("17148673981"), 
 		receipts : ko.observableArray([]),
 		toggleVerified : function(obj) {
-			console.log(obj);
-			$.post('/toggleVerified', {id : obj._id}, function(data) {
+			$.post('/toggleVerified', obj, function(data) {
 				if(data) {
 					console.log(data);
 				}
 			})
+			return true;
 		}
+
 	};
 	ko.computed(function(){
 		var user = this();
@@ -206,10 +209,20 @@ $(document).ready(function(){
 			viewModel.receipts([]);
 		}else{
 			$.get("/message/" + user, function(data){
+				data.forEach(function(elem){
+					
+					if(elem.verified == true){
+						elem.verified = ko.observable(true);
+					}else{
+						elem.verified = ko.observable(false);
+					}
+
+				})
 				viewModel.receipts(data);
 			});
 		}
 	},viewModel.user);
+
 
 	ko.applyBindings(viewModel, document.getElementById("body"));
 
@@ -224,6 +237,10 @@ $(document).ready(function(){
 		});
 		console.log((sum * .1).toFixed(2));
 		window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=' + fuckyousum + '&note=cantstopbacon&audience=private');
+
+		$('.receipt').each(function(element) {
+			console.log(element);
+		});
 		//window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=.01&note=faggot&audience=private');
 	});
 

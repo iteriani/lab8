@@ -48,8 +48,9 @@ var receiptSchema = new Schema({
     receiptURL : String, 
     userID : String, 
     amount : Number, 
-    verified : String, 
-    date : Date
+    verified : Boolean, 
+    date : Date, 
+    archived : Boolean
 }); 
 
 /*
@@ -94,14 +95,6 @@ app.get('/login', login.view);
 app.get("/message/:phone", function(req,res){
 	console.log(req.params);
 	Message.find({userID : "+" + req.params.phone}, function(err,data){
-		data.forEach(function(elem){
-			console.log(elem);
-			if(elem.verified == 't'){
-				elem.verified = true;
-			}else{
-				elem.verified = false;
-			}
-		})
 		res.json(data)
 	})
 });
@@ -170,7 +163,7 @@ app.post("/message", function(req,res){
 	if(userList[phoneNumber].message != null && userList[phoneNumber].photo != null){
 		console.log("SAVING MESSAGE")
 		var amount = parseFloat(userList[phoneNumber].message);
-		var item = {receiptURL : userList[phoneNumber].photo, userID : phoneNumber, amount : amount, date: new Date()};
+		var item = {receiptURL : userList[phoneNumber].photo, userID : phoneNumber, amount : amount, date: new Date(), archived : false};
 		request.get("https://api.idolondemand.com/1/api/sync/ocrdocument/v1?url=" 
 				+ userList[phoneNumber].photo + "&mode=document_photo&apikey=826d038b-afde-4f31-a447-a56ae91859f2",
 			function(error,response, body){
@@ -178,10 +171,10 @@ app.post("/message", function(req,res){
 				var data = body.text_block[0].text.replace(/\s+/g, '');
 				console.log(data);
 				if(data.indexOf(userList[phoneNumber].message)>=0){
-					item.verified = "t";
+					item.verified = true;
 					console.log("VERIFIED");
 				}else{
-					item.verified = "f";
+					item.verified = false;
 					console.log("NOT VERIFIED");
 				}
 				var message = new Message(item);
@@ -200,21 +193,11 @@ app.post("/message", function(req,res){
 });
 
 app.post('/toggleVerified', function(req, res) {
-	console.log(req.body['id']);
-	Message.findOne({ _id : req.body['id']}, function(err, data) {
+	Message.findOne({ _id : req.body['_id']}, function(err, data) {
 		if(err) {
 			console.log(err);
 		} else {
-			if(data.verified === undefined){
-				data.verified = 'f';
-			}
-			if(data.verified == 't') {
-				console.log('t to f');
-				data.verified = 'f';
-			} else {
-				console.log('f to t');
-				data.verified = 't';
-			}
+			data.verified = req.body.verified;
 			data.save();
 		}
 	});
