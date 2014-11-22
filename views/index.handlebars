@@ -1,112 +1,137 @@
 <!doctype html>
 
 <html>
+
 <head>
-	<title>Tax Return </title>	
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="/css/bootstrap.min.css" rel="stylesheet">
-	<link href="/css/bootstrap-theme.min.css" rel="stylesheet">
-	<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-	<script src="https://code.highcharts.com/highcharts.js"></script>
-	<script src="https://code.highcharts.com/highcharts-more.js"></script>
-	<script src="https://code.highcharts.com/modules/exporting.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
-	<script src="https://cdn.socket.io/socket.io-1.2.1.js"></script>
+    <title>Tax Return </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-theme.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.2.1.js"></script>
 
     <!-- Custom styles for this template -->
     <link href="http://getbootstrap.com/examples/dashboard/dashboard.css" rel="stylesheet">
-<head>
-<body class="container">
-	    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Ricipt</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Dashboard</a></li>
-            <li><a href="#">Settings</a></li>
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Help</a></li>
-          </ul>
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" data-bind="value : user" placeholder="Search...">
-          </form>
-        </div>
-      </div>
-    </nav>
 
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-          <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
-            <li><a href="#">Reports</a></li>
-            <li><a href="#">Analytics</a></li>
-            <li><a href="#">Export</a></li>
-          </ul>
-          <ul class="nav nav-sidebar">
-            <li><a href="">Nav item</a></li>
-            <li><a href="">Nav item again</a></li>
-            <li><a href="">One more nav</a></li>
-            <li><a href="">Another nav item</a></li>
-            <li><a href="">More navigation</a></li>
-          </ul>
-          <ul class="nav nav-sidebar">
-            <li><a href="">Nav item again</a></li>
-            <li><a href="">One more nav</a></li>
-            <li><a href="">Another nav item</a></li>
-          </ul>
-        </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">Dashboard</h1>
+    <head>
 
-          <div class="row placeholders">
-            <div class="col-xs-6 col-sm-3 placeholder">
-              <div id="pie"></div>
+        <body class="container">
+            <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="#">Ricipt</a>
+                    </div>
+                    <div id="navbar" class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="#">Dashboard</a>
+                            </li>
+                            <li><a href="#">Settings</a>
+                            </li>
+                            <li><a href="#">Profile</a>
+                            </li>
+                            <li><a href="#">Help</a>
+                            </li>
+                        </ul>
+                        <form class="navbar-form navbar-right">
+                            <input type="text" class="form-control" data-bind="value : user" placeholder="Search...">
+                        </form>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-3 col-md-2 sidebar">
+                        <ul class="nav nav-sidebar">
+                            <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a>
+                            </li>
+                            <li><a href="#">Reports</a>
+                            </li>
+                            <li><a href="#">Analytics</a>
+                            </li>
+                            <li><a href="#">Export</a>
+                            </li>
+                        </ul>
+                        <ul class="nav nav-sidebar">
+                            <li><a href="">Nav item</a>
+                            </li>
+                            <li><a href="">Nav item again</a>
+                            </li>
+                            <li><a href="">One more nav</a>
+                            </li>
+                            <li><a href="">Another nav item</a>
+                            </li>
+                            <li><a href="">More navigation</a>
+                            </li>
+                        </ul>
+                        <ul class="nav nav-sidebar">
+                            <li><a href="">Nav item again</a>
+                            </li>
+                            <li><a href="">One more nav</a>
+                            </li>
+                            <li><a href="">Another nav item</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-9 col-sm-offset-3 col-md-8 col-md-offset-2 main">
+                        <div class="row placeholders">
+                            <div class="col-xs-6 col-sm-3 placeholder">
+
+                            </div>
+                            <div class="col-xs-6 col-sm-3 placeholder">
+
+                            </div>
+
+                        </div>
+
+                        <h2 class="sub-header">Transactions</h2>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Amount</th>
+                                        <th>Date</th>
+                                        <th>ImageURL</th>
+                                        <th>Verified</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-bind="foreach : receipts">
+                                    <tr class="receipt">
+                                        <td data-bind="text : $index"></td>
+                                        <td data-bind="text : amount"></td>
+                                        <td data-bind="text : new Date(date).toDateString()"></td>
+                                        <td><a target="_blank" data-bind="attr : {href : receiptURL}">Receipt Link</a>
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" data-bind="checked : verified, click : $parent.toggleVerified" class="form-control">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <button id="huehue">Pay</button>
+                        </div>
+                    </div>
+                    <div class="col-md-2 ">
+                    	<div id="pie"></div>
+                    	<div id="line"></div>
+                    </div>
+
+                </div>
             </div>
-            <div class="col-xs-6 col-sm-3 placeholder">
-              <div id="line"></div>
-            </div>
 
-          </div>
-
-          <h2 class="sub-header">Transactions</h2>
-          <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Amount</th>
-                  <th>Date</th>
-                  <th>ImageURL</th>
-                  <th>Verified</th>
-                </tr>
-              </thead>
-              <tbody  data-bind="foreach : receipts">
-				<tr class="receipt">
-					<td data-bind="text : $index"></td>
-					<td data-bind="text : amount"></td>
-					<td data-bind="text : new Date(date).toDateString()"></td>
-					<td><a target="_blank" data-bind="attr : {href : receiptURL}">Receipt Link</a></td>
-					<td>  <input type="checkbox" data-bind="checked : verified, click : $parent.toggleVerified" class="form-control" ></td>
-				</tr>
-              </tbody>
-            </table>
-            <button id="huehue">Pay</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!--
+            <!--
 	<div id="body">
 		<input data-bind="value : user"></input>
 		<table class="table" data-bind="foreach : receipts">
@@ -117,146 +142,151 @@
 			</tr>
 		</table>
 	</div>-->
-</body>
+        </body>
 
-<script>
-$(document).ready(function(){
-	var socket = io(document.URL);
+        <script>
+            $(document).ready(function() {
+                var socket = io(document.URL);
 
-	socket.on('update', function(data) {
-		if(data.message == 'message') {
-			console.log(data);
-		} else if(data.message == 'image') {
-			console.log(data);
-		} else if(data.message == 'saving') {
-			console.log(data);
-		} else {
-			console.log('wtf');
-		}
-	});
-
-   $('#line').highcharts({
-   		chart : {
-   			width:600, height:200
-   		},
-        title: {
-            text: 'Spending Rate',
-            x: -20 //center
-        },
-
-        yAxis: {
-            title: {
-                text: 'Amount'
-            },
-            plotLines: [{
-                value: 0,
-                width: 1,
-                color: '#808080'
-            }]
-        },
-        tooltip: {
-            valueSuffix: '°C'
-        },
-        legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'middle',
-            borderWidth: 0
-        },
-        series: [{
-            name: 'Set 1',
-            data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
-        }]
-    });
-	$('#pie').highcharts({
-        chart: {
-            plotBackgroundColor: null,
-            plotBorderWidth: 1,//null,
-            plotShadow: false,
-            width:200,
-            height:200
-        },
-        title: {
-            text: 'Usage'
-        },
-        tooltip: {
-            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-        },
-        plotOptions: {
-            pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                dataLabels: {
-                    enabled: true,
-                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                    style: {
-                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                socket.on('update', function(data) {
+                    if (data.message == 'message') {
+                        console.log(data);
+                    } else if (data.message == 'image') {
+                        console.log(data);
+                    } else if (data.message == 'saving') {
+                        console.log(data);
+                    } else {
+                        console.log('wtf');
                     }
-                }
-            }
-        },
-        series: [{
-            type: 'pie',
-            name: 'Usage',
-            data: [
-                ['Used',   45.0],
-                ['Left',       55.0]
-            ]
-        }]
-    });
+                });
+
+                $('#line').highcharts({
+                    chart: {
+                        width: 250,
+                        height: 200
+                    },
+                    legend : {
+
+                    },
+                    title: {
+                        text: 'Spending Rate',
+                        x: -20 //center
+                    },
+
+                    yAxis: {
+                        title: {
+                            text: 'Amount'
+                        },
+                        plotLines: [{
+                            value: 0,
+                            width: 1,
+                            color: '#808080'
+                        }]
+                    },
+                    tooltip: {
+                        valueSuffix: '°C'
+                    },
+                    legend: {
+                        layout: 'vertical',
+                        align: 'right',
+                        verticalAlign: 'middle',
+                        borderWidth: 0,
+                        enabled : false
+                    },
+                    series: [{
+                        name: 'Set 1',
+                        data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+                    }]
+                });
+                $('#pie').highcharts({
+                    chart: {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: 1, //null,
+                        plotShadow: false,
+                        width: 250,
+                        height: 200
+                    },
+                    title: {
+                        text: 'Usage'
+                    },
+                    tooltip: {
+                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: true,
+                                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                style: {
+                                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                                }
+                            }
+                        }
+                    },
+                    series: [{
+                        type: 'pie',
+                        name: 'Usage',
+                        data: [
+                            ['Used', 45.0],
+                            ['Left', 55.0]
+                        ]
+                    }]
+                });
 
 
-	var viewModel = {
-		user : ko.observable("17148673981"), 
-		receipts : ko.observableArray([]),
-		toggleVerified : function(obj) {
-			$.post('/toggleVerified', obj);
-			return true;
-		}
+                var viewModel = {
+                    user: ko.observable("17148673981"),
+                    receipts: ko.observableArray([]),
+                    toggleVerified: function(obj) {
+                        $.post('/toggleVerified', obj);
+                        return true;
+                    }
 
-	};
-	ko.computed(function(){
-		var user = this();
-		if(user.length == 0){
-			viewModel.receipts([]);
-		}else{
-			$.get("/message/" + user, function(data){
-				data.forEach(function(elem){
-					
-					if(elem.verified == true){
-						elem.verified = ko.observable(true);
-					}else{
-						elem.verified = ko.observable(false);
-					}
+                };
+                ko.computed(function() {
+                    var user = this();
+                    if (user.length == 0) {
+                        viewModel.receipts([]);
+                    } else {
+                        $.get("/message/" + user, function(data) {
+                            data.forEach(function(elem) {
 
-				})
-				viewModel.receipts(data);
-			});
-		}
-	},viewModel.user);
+                                if (elem.verified == true) {
+                                    elem.verified = ko.observable(true);
+                                } else {
+                                    elem.verified = ko.observable(false);
+                                }
+
+                            })
+                            viewModel.receipts(data);
+                        });
+                    }
+                }, viewModel.user);
 
 
-	ko.applyBindings(viewModel, document.getElementById("body"));
+                ko.applyBindings(viewModel, document.getElementById("body"));
 
-	$('#huehue').on('click', function() {
-		var sum = 0;
-		var fuckyousum = .01;
-		viewModel.receipts().forEach(function(element) {
-			if(element.verified() == true) {
-				sum += element.amount;
-			}
+                $('#huehue').on('click', function() {
+                    var sum = 0;
+                    var fuckyousum = .01;
+                    viewModel.receipts().forEach(function(element) {
+                        if (element.verified() == true) {
+                            sum += element.amount;
+                        }
 
-		});
-		console.log((sum * .1).toFixed(2));
-		window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=' + fuckyousum + '&note=cantstopbacon&audience=private');
+                    });
+                    console.log((sum * .1).toFixed(2));
+                    window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=' + fuckyousum + '&note=cantstopbacon&audience=private');
 
-		$('.receipt').each(function(element) {
-			console.log(element);
-		});
-		//window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=.01&note=faggot&audience=private');
-	});
+                    $('.receipt').each(function(element) {
+                        console.log(element);
+                    });
+                    //window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=.01&note=faggot&audience=private');
+                });
 
-});
-</script>
+            });
+        </script>
 
 </html>
