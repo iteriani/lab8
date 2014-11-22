@@ -4,10 +4,10 @@
  */
 
 var express = require('express');
-var http = require('http');
+var app = express();
 var path = require('path');
 var handlebars = require('express3-handlebars');
-
+var http = require('http');
 
 var request = require('request');
 
@@ -20,10 +20,32 @@ var client_number = '+19169434276';
 var index = require('./routes/index');
 var access_token;
 
+app.set('port', process.env.PORT || 8000);
+app.set('views', path.join(__dirname, 'views'));
+app.engine('handlebars', handlebars());
+app.set('view engine', 'handlebars');
+app.use(express.favicon());
+app.use(express.logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded());
+app.use(express.methodOverride());
+app.use(express.cookieParser('Intro HCI secret key'));
+app.use(express.session());
+app.use(app.router);
+app.use(express.static(path.join(__dirname, 'public')));
+
+var server = http.createServer(app).listen(app.get('port'), function(){
+  console.log('Express server listening on port ' + app.get('port'));
+});
+
+var login = require('./routes/login'); 
 // Example route
 // var user = require('./routes/user');
 
-var app = express();
+
+
+var io = require('socket.io')(server);
+
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://cantstopthe:bacon@kahana.mongohq.com:10081/BuddyWatch', function(err){
 	if(err){console.log("NO CONNECT");}else{
@@ -39,37 +61,28 @@ var Schema = mongoose.Schema;
  * Schemas 
  */ 
 var accSchema = new Schema({
-    phoneNumber: String, account: String, amount: Number
+    phoneNumber: Number, 
+    account: String,     
+    password: String
 }); 
-var parentsSchema = new Schema({
-    name: String
-});  
+
 var receiptSchema = new Schema({
-    receiptURL : String, userID : String, amount : Number, verified : Boolean, date : Date, archived : Boolean
+    receiptURL : String, 
+    userID : String, 
+    amount : Number, 
+    verified : Boolean, 
+    date : Date, 
+    archived : Boolean
 }); 
 
 /*
  *  Model definitions 
  */ 
-var Message = mongoose.model("Recipt", receiptSchema);
-var phoneNumbers = mongoose.model("User", accSchema); 
-var parents = mongoose.model("Parents", parentsSchema); 
+var Message = mongoose.model("Recipt", receiptSchema, "recipts"); 
+var phoneNumbers = mongoose.model("User", accSchema, "phoneNumbers"); 
 
 
 // all environments
-app.set('port', process.env.PORT || 8000);
-app.set('views', path.join(__dirname, 'views'));
-app.engine('handlebars', handlebars());
-app.set('view engine', 'handlebars');
-app.use(express.favicon());
-app.use(express.logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded());
-app.use(express.methodOverride());
-app.use(express.cookieParser('Intro HCI secret key'));
-app.use(express.session());
-app.use(app.router);
-app.use(express.static(path.join(__dirname, 'public')));
 
 // development only
 if ('development' == app.get('env')) {
@@ -85,7 +98,8 @@ app.get('/', function(req, res) {
 		res.render('index');
 	}
 });
-
+app.get('/login', login.view); 
+//get rceipt via phone number
 app.get("/message/:phone", function(req,res){
 	console.log(req.params);
 	Message.find({userID : "+" + req.params.phone}, function(err,data){
@@ -97,9 +111,47 @@ app.get('/pay', function(req, res) {
 	
 });
 
+//get the user by phone number
+app.get("/user/:phone", function(req,res){    
+    phoneNumbers.find({phoneNumber : req.params.phone}, function(err, data){
+        console.log(data); 
+        res.json(data)
+    }); 
+}); 
+
+//get the user by acc name
+app.get("/account/:name", function(req,res){    
+    phoneNumbers.find({account : req.params.name}, function(err, data){
+        console.log(data); 
+        res.json(data)
+    }); 
+}); 
+
 app.get('/url', function(req, res) {
 	res.send(req.query['venmo_challenge']);
-});
+}); 
+
+//login stuff and validation
+app.post("/login", function(req, res){    
+    var fields = req.body;     
+    var username = req.body.users; 
+    console.log(username); 
+    phoneNumbers.find({account : username}, function(err, data){   
+        console.log(data);
+        if(data[0].password == fields.password)
+        {            
+            //res.send("SUCCESS"); 
+            res.send({
+              retStatus : "Success",
+              redirectTo: '/',
+              msg : 'Just go there please' // this should help
+            }); 
+        }
+        else
+            res.send("FAIL");         
+        res.end(); 
+    });     
+}); 
 
 app.post("/message", function(req,res){
 	var data = req.body;
@@ -107,16 +159,19 @@ app.post("/message", function(req,res){
 	var phoneNumber = data.From;
 	if(userList[phoneNumber] === undefined){
 		userList[phoneNumber] = {};
-	}
+	}  
 	if(data.MediaUrl0){
+		io.emit('update', { message: 'image'});
 		userList[phoneNumber].photo = data.MediaUrl0;
 		console.log("set up photo for " + phoneNumber);
 	}else{
+		io.emit('update', { message : 'message'});
 		userList[phoneNumber].message = data.Body;
 		console.log("set up message for " + phoneNumber);
 	}
 	console.log(userList[phoneNumber]);
 	if(userList[phoneNumber].message != null && userList[phoneNumber].photo != null){
+		io.emit('update', { message : 'saving'});
 		console.log("SAVING MESSAGE")
 		var amount = parseFloat(userList[phoneNumber].message);
 		var item = {receiptURL : userList[phoneNumber].photo, userID : phoneNumber, amount : amount, date: new Date(), archived : false};
@@ -157,15 +212,13 @@ app.post('/toggleVerified', function(req, res) {
 			data.save();
 		}
 	});
-	res.send('success');
+	res.end();
 })
 /*
 
 */
 
 
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
-});
-
-
+io.on('connection', function(socket) {
+	console.log('connected');
+})
