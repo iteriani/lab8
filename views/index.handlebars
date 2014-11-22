@@ -12,6 +12,8 @@
 	<script src="https://code.highcharts.com/highcharts-more.js"></script>
 	<script src="https://code.highcharts.com/modules/exporting.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
+	<script src="https://cdn.socket.io/socket.io-1.2.1.js"></script>
+
     <!-- Custom styles for this template -->
     <link href="http://getbootstrap.com/examples/dashboard/dashboard.css" rel="stylesheet">
 <head>
@@ -119,6 +121,20 @@
 
 <script>
 $(document).ready(function(){
+	var socket = io('localhost:8000/');
+
+	socket.on('update', function(data) {
+		if(data.message == 'message') {
+			console.log(data);
+		} else if(data.message == 'image') {
+			console.log(data);
+		} else if(data.message == 'saving') {
+			console.log(data);
+		} else {
+			console.log('wtf');
+		}
+	});
+
    $('#line').highcharts({
    		chart : {
    			width:600, height:200
@@ -194,11 +210,7 @@ $(document).ready(function(){
 		user : ko.observable("17148673981"), 
 		receipts : ko.observableArray([]),
 		toggleVerified : function(obj) {
-			$.post('/toggleVerified', obj, function(data) {
-				if(data) {
-					console.log(data);
-				}
-			})
+			$.post('/toggleVerified', obj);
 			return true;
 		}
 
