@@ -30,8 +30,6 @@ Please Log In
             password : self.password()        
         };
         $.post("/login/", data, function(returnedData) {
-            console.log(returnedData);
-            if(returnedData.retStatus == "Success")
                 window.location = "/"; 
         });
         }

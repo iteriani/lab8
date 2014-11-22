@@ -91,20 +91,11 @@ if ('development' == app.get('env')) {
 
 // Add routes here
 app.get('/', function(req, res) {
-    if (req.cookies.user == undefined || req.cookies.pass == undefined){
-        res.render('login'); 
-    }
-    else
-    {
-        res.render('index'); 
-    }
-    /*
-	if(req.query['error']) {
-		res.send(req.query['error']); 
-	}  else {
-		access_token = req.query['access_token'];
-		res.render('index');
-    }*/ 
+	if(req.session.user){
+		res.render("index");
+	}else{
+		res.render("login");
+	}
 });
 app.get('/login', login.view); 
 //get rceipt via phone number
@@ -148,21 +139,11 @@ var validateLogin  = function(req, res){
     var fields = req.body;     
     var username = req.body.users; 
     console.log(username); 
-    phoneNumbers.find({account : username}, function(err, data){   
-        console.log(data);
-        if(data[0].password == fields.password)
-        {            
-            //res.send("SUCCESS"); 
-            res.cookie('user', data[0].users, { maxAge: 900000 });
-	        res.cookie('pass', data[0].password, { maxAge: 900000 });
-            res.send({  
-              retStatus : "Success",
-              redirectTo: '/',
-              msg : 'Just go there please' // this should help
-            }); 
-        }
-        else
-            res.send("FAIL");         
+    phoneNumbers.findOne({account : username}, function(err, user){   
+        if(user.password == fields.password)
+        {
+        	req.session.user = user;
+        }    
         res.end(); 
     });     
 }
