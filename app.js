@@ -23,6 +23,14 @@ var index = require('./routes/index');
 // var user = require('./routes/user');
 
 var app = express();
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://cantstopthe:bacon@kahana.mongohq.com:10081/BuddyWatch');
+
+var userList = {};
+/* id : {photo : null, amount : null}*/
+
+var Message = mongoose.model("Recipt", {receiptURL : String, userID : String, amount : Number});
+
 
 // all environments
 app.set('port', process.env.PORT || 8000);
@@ -60,10 +68,31 @@ app.get('/message', function(req, res) {
 });
 
 app.post("/message", function(req,res){
-	console.log(req.body);
+	var data = req.body;
+	var phoneNumber = data.from;
+	if(userList[phoneNumber] === undefined){
+		userList[phoneNumber] = {};
+	}
+	if(data.MediaUrl0){
+		userList[phoneNumber].photo = data.MediaUrl0;
+	}else{
+		userList[phoneNumber].message = data.body;
+	}
+	if(userList[phoneNumber].message != null && userList[phoneNumber].photo != null){
+		var amount = parseFloat(userList[phoneNumber].message);
+		var message = new Message({receiptURL : userList[phoneNumber].photo, userID : phoneNumber, amount : amount});
+		message.save(function(err,data){
+			console.log(err,data);
+		});
+		delete userList[phoneNumber];
+	};
+
 	res.end();
 })
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
+
+
+
