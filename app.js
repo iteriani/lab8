@@ -8,6 +8,7 @@ var http = require('http');
 var path = require('path');
 var handlebars = require('express3-handlebars');
 
+
 var request = require('request');
 
 var sid = 'AC0656d1bf2627a49bc8bcc853629936ff';
@@ -75,12 +76,30 @@ if ('development' == app.get('env')) {
 }
 
 // Add routes here
-app.get('/', index.view);
+app.get('/', function(req, res) {
+	if(req.query['error']) {
+		res.send(req.query['error']); 
+	}  else {
+		access_token = req.query['access_token'];
+		res.render('index');
+	}
+});
 app.get("/message/:phone", function(req,res){
 	console.log(req.params);
 	Message.find({userID : "+" + req.params.phone}, function(err,data){
 		res.json(data)
 	})
+});
+
+app.post('/pay', function(req, res) {
+	if(!access_token) {
+		res.send('YOU HAVE TO BE LOGGED IN BITCH');
+	} else {
+		request('https://api.venmo.com/v1/payments/?access_token='+ access_token + 
+			'&phone=17148673981&note=faggot&amount=.01&audience=private', function(error, response, body) {
+				console.log(error, response, body);
+		})
+	}
 });
 
 app.get('/url', function(req, res) {
