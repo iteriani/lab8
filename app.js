@@ -45,7 +45,7 @@ var parentsSchema = new Schema({
     name: String
 });  
 var receiptSchema = new Schema({
-    receiptURL : String, userID : String, amount : Number
+    receiptURL : String, userID : String, amount : Number, verified : String
 }); 
 
 /*
@@ -109,7 +109,7 @@ app.get('/url', function(req, res) {
 
 app.post("/message", function(req,res){
 	var data = req.body;
-	console.log(data);
+	res.end();
 	var phoneNumber = data.From;
 	if(userList[phoneNumber] === undefined){
 		userList[phoneNumber] = {};
@@ -125,22 +125,37 @@ app.post("/message", function(req,res){
 	if(userList[phoneNumber].message != null && userList[phoneNumber].photo != null){
 		console.log("SAVING MESSAGE")
 		var amount = parseFloat(userList[phoneNumber].message);
-		var message = new Message({receiptURL : userList[phoneNumber].photo, userID : phoneNumber, amount : amount, date: new Date()});
-		message.save(function(err,data){
-			console.log("WHAT?")
-			if(err){
-				console.log("ERORR");
-			}
+		var item = {receiptURL : userList[phoneNumber].photo, userID : phoneNumber, amount : amount, date: new Date()};
+		request.get("https://api.idolondemand.com/1/api/sync/ocrdocument/v1?url=" 
+				+ userList[phoneNumber].photo + "&mode=document_photo&apikey=826d038b-afde-4f31-a447-a56ae91859f2",
+			function(error,response, body){
+				var data = body.text_block[0].replace(/\s+/g, '');;
+				if(data.indexOf(userList[phoneNumber].message)>=0){
+					item.verified = "t";
+				}else{
+					item.verified = "f";
+				}
+				var message = new Message(item);
+				message.save(function(err,data){
+					if(err){
+						console.log("ERORR");
+					}else{
+						console.log("item saved!");
+						delete userList[phoneNumber];		
+					}
+				});	
 		});
-		delete userList[phoneNumber];
-	};
 
-	res.end();
+	};
+/*
+
+*/
+	
 })
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
-
+}
 
