@@ -130,7 +130,7 @@ app.post("/message", function(req,res){
 				+ userList[phoneNumber].photo + "&mode=document_photo&apikey=826d038b-afde-4f31-a447-a56ae91859f2",
 			function(error,response, body){
 				console.log(body);
-				var data = body.text_block[0].replace(/\s+/g, '');
+				var data = body.text_block[0].text.replace(/\s+/g, '');
 				console.log(data);
 				if(data.indexOf(userList[phoneNumber].message)>=0){
 					item.verified = "t";
