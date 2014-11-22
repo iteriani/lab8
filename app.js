@@ -152,6 +152,7 @@ var validateLogin  = function(req, res){
         console.log(data);
         if(data[0].password == fields.password)
         {            
+        	console.log("ok");
             //res.send("SUCCESS"); 
             res.cookie('user', data[0].users, { maxAge: 900000 });
 	        res.cookie('pass', data[0].password, { maxAge: 900000 });

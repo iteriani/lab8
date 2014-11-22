@@ -2,22 +2,54 @@
 <head>
 	<title>Tax Return Login</title>	
 	<meta charset="utf-8">
+    <link rel="stylesheet" href="./css/app.css">
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-theme.min.css" rel="stylesheet">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">	
     <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
 <head>
-Please Log In
-<form data-bind="submit: doSomething">
-    <input type="text" class="form-control" data-bind="value : user" placeholder="username" name="users">
-    </br>
-    </br>
-    <input type="text" class="form-control" data-bind="value : password" placeholder="password" name="password">
-    </br>
-    </br>
-    <button type="submit">Submit</button>
-</form>
+<body>
+
+    <div class="container">
+        <div id="background-image">
+            <div id="background-blur"></div>
+        </div>
+        <div id="logo" class="row text-center">
+            <div class=" login col-lg-12">
+                <h1>LOGO GOES HERE</h1>
+            </div>
+        </div>
+        <div class="row text-center">
+            <div class="col-lg-4 col-lg-offset-4 top-offset col-md-4 col-md-offset-4 col-sm-4 col-sm-offset-4">
+                <form data-bind="submit: doSomething">
+                <input type="text" class="form-control" data-bind="value : user" placeholder="username" name="users">
+                </br>
+                </br>
+                <input type="password" class="form-control" data-bind="value : password" placeholder="password" name="password">
+                </br>
+                </br>
+                {{!-- can probably expand --}}
+                <button class="btn btn-info" type="submit">&nbsp &nbsp &nbsp Login &nbsp&nbsp &nbsp </button>
+                </form>
+            </div>
+        </div>
+    </div> <!-- /container -->
+</body>
+
  
 <script type="text/javascript">
+
+    $(document).ready(function() {
+        var height = screen.height;
+        var width = screen.width;
+
+        $('#background-image').css({
+            height: height,
+            width: width
+        });
+    });
+
     var viewModel = new function()
     {
         var self = this;    
@@ -32,7 +64,7 @@ Please Log In
         $.post("/login/", data, function(returnedData) {
             console.log(returnedData);
             if(returnedData.retStatus == "Success")
-                window.location = "/"; 
+                window.location = "localhost:8000/"; 
         });
         }
     }
