@@ -88,24 +88,19 @@ app.get('/', function(req, res) {
 app.get("/message/:phone", function(req,res){
 	console.log(req.params);
 	Message.find({userID : "+" + req.params.phone}, function(err,data){
+		data.forEach(function(elem){
+			if(elem.verified == 't'){
+				elem.verified = true;
+			}else{
+				elem.verified = false;
+			}
+		})
 		res.json(data)
 	})
 });
 
 app.get('/pay', function(req, res) {
-	if(!access_token) {
-		res.send('YOU HAVE TO BE LOGGED IN BITCH');
-	} else {
-		request('https://api.venmo.com/v1/payments/?access_token='+ access_token + 
-			'&phone=17148673981&note=faggot&amount=.01&audience=private', function(error, response, body) {
-				if(error) {
-					console.log('ERROR ' + error);
-				}
-				console.log('RESPONSE ' + response);
-		});
-		res.end();
-	}
-	res.end();
+	
 });
 
 app.get('/url', function(req, res) {

@@ -96,7 +96,6 @@
                   <th>Date</th>
                   <th>ImageURL</th>
                   <th>Verified</th>
-                  <th>Pay?</th>
                 </tr>
               </thead>
               <tbody  data-bind="foreach : receipts">
@@ -105,11 +104,11 @@
 					<td data-bind="text : amount"></td>
 					<td data-bind="text : new Date(date).toDateString()"></td>
 					<td><a target="_blank" data-bind="attr : {href : receiptURL}">Receipt Link</a></td>
-					<td>  <input type="checkbox" class="form-control" ></td>
-					<td> <form action="/pay"><input type="submit" /></form></td>
+					<td>  <input type="checkbox" data-bind="click : $parent.toggleVerified" class="form-control" ></td>
 				</tr>
               </tbody>
             </table>
+            <button id="huehue">Pay</button>
           </div>
         </div>
       </div>
@@ -132,7 +131,10 @@
 $(document).ready(function(){
 	var viewModel = {
 		user : ko.observable("17148673981"), 
-		receipts : ko.observableArray([])
+		receipts : ko.observableArray([]),
+		toggleVerified : function(obj) {
+			console.log(obj);
+		}
 	};
 	ko.computed(function(){
 		var user = this();
@@ -144,7 +146,20 @@ $(document).ready(function(){
 			});
 		}
 	},viewModel.user);
+
 	ko.applyBindings(viewModel, document.getElementById("body"));
+
+	$('#huehue').on('click', function() {
+		var sum = 0;
+		viewModel.receipts().forEach(function(element) {
+			if(element.verified() == true) {
+				sum += element.amount;
+			}
+
+		});
+		console.log((sum * .1).toFixed(2));
+		//window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=.01&note=faggot&audience=private');
+	});
 
 });
 </script>
