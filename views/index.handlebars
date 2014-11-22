@@ -94,7 +94,7 @@
 					<td data-bind="text : amount"></td>
 					<td data-bind="text : new Date(date).toDateString()"></td>
 					<td><a target="_blank" data-bind="attr : {href : receiptURL}">Receipt Link</a></td>
-					<td>  <input type="checkbox" data-bind="click : $parent.toggleVerified" class="form-control" ></td>
+					<td>  <input type="checkbox" data-bind="checked : verified, click : $parent.toggleVerified" class="form-control" ></td>
 				</tr>
               </tbody>
             </table>
@@ -206,6 +206,14 @@ $(document).ready(function(){
 			viewModel.receipts([]);
 		}else{
 			$.get("/message/" + user, function(data){
+				data.forEach(function(elem){
+					console.log(elem.verified);
+					if(elem.verified == 'true'){
+						elem.verified = true;
+					}else{
+						elem.verified = false;
+					}
+				})
 				viewModel.receipts(data);
 			});
 		}

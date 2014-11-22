@@ -90,8 +90,8 @@ app.get("/message/:phone", function(req,res){
 	console.log(req.params);
 	Message.find({userID : "+" + req.params.phone}, function(err,data){
 		data.forEach(function(elem){
-			console.log(elem);
-			if(elem.verified == 't'){
+			if(elem.verified == 't' || elem.verified == 'true'){
+				console.log("ALLOWING VERIFIED");
 				elem.verified = true;
 			}else{
 				elem.verified = false;
