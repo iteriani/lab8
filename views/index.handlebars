@@ -1,121 +1,148 @@
 <!doctype html>
 
 <html>
+
 <head>
-	<title>Tax Return </title>	
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="/css/bootstrap.min.css" rel="stylesheet">
-	<link href="/css/bootstrap-theme.min.css" rel="stylesheet">
-	<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-	<script src="https://code.highcharts.com/highcharts.js"></script>
-	<script src="https://code.highcharts.com/highcharts-more.js"></script>
-	<script src="https://code.highcharts.com/modules/exporting.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
-	<script src="https://cdn.socket.io/socket.io-1.2.1.js"></script>
-    <script src="js/accController.js"></script>
+    <title>Tax Return </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/bootstrap.css" rel="stylesheet">
+   <!-- <link href="/css/bootstrap-theme.min.css" rel="stylesheet">-->
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.2.1.js"></script>
     <script src="js/bootstrap.min.js"></script>
+   <!-- <link rel="stylesheet" href="/css/lavish.css"/>-->
+
     <!-- Custom styles for this template -->
     <link href="http://getbootstrap.com/examples/dashboard/dashboard.css" rel="stylesheet">
-<head>
-<body class="container">
-	    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Ricipt</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Dashboard</a></li>
-            <li><a href="#">Settings</a></li>
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Help</a></li>
-          </ul>
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" data-bind="value : user" placeholder="Search...">
-          </form>
-        </div>
-      </div>
-    </nav>
 
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-          <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
-            <li><a href="#">Reports</a></li>
-            <li><a href="#">Analytics</a></li>
-            <li><a href="#">Export</a></li>
-          </ul>
-          <ul class="nav nav-sidebar">
-            <li><a href="">Nav item</a></li>
-            <li><a href="">Nav item again</a></li>
-            <li><a href="">One more nav</a></li>
-            <li><a href="">Another nav item</a></li>
-            <li><a href="">More navigation</a></li>
-          </ul>
-          <ul class="nav nav-sidebar">
-            <li><a href="">Nav item again</a></li>
-            <li><a href="">One more nav</a></li>
-            <li><a href="">Another nav item</a></li>
-          </ul>
-        </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">Dashboard</h1>        
-          <div class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
-              Accounts
-              <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1" data-bind="foreach: childAccs">                            
-              <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-bind="text: $data"></a></li>
-            </ul>
-          </div>
-          <div class="row placeholders">
-            <div class="col-xs-6 col-sm-3 placeholder">
-              <div id="pie"></div>
+    <head>
+
+        <body class="container">
+            <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="#">Ricipt</a>
+                    </div>
+                    <div id="navbar" class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="#">Dashboard</a>
+                            </li>
+                            <li><a href="#">Settings</a>
+                            </li>
+                            <li><a href="#">Profile</a>
+                            </li>
+                            <li><a href="#">Help</a>
+                            </li>
+                        </ul>
+                        <form class="navbar-form navbar-right">
+                            <input type="text" class="form-control" data-bind="value : user" placeholder="Search...">
+                        </form>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-3 col-md-2 sidebar">
+                        <ul class="nav nav-sidebar">
+                            <li data-bind="css : {active : viewCurrent}"><a href="#" data-bind="click : setCurrent">Current</a>
+                            </li>
+                            <li data-bind="css : {active : !viewCurrent()}"><a href="#" data-bind="click : setArchived">Historical</a>
+                            </li>
+                            <li><a href="#">Analytics</a>
+                            </li>
+                            <li><a href="#">Export</a>
+                            </li>
+                        </ul>
+                        <ul class="nav nav-sidebar">
+                            <li><a href="">Nav item</a>
+                            </li>
+                            <li><a href="">Nav item again</a>
+                            </li>
+                            <li><a href="">One more nav</a>
+                            </li>
+                            <li><a href="">Another nav item</a>
+                            </li>
+                            <li><a href="">More navigation</a>
+                            </li>
+                        </ul>
+                        <ul class="nav nav-sidebar">
+                            <li><a href="">Nav item again</a>
+                            </li>
+                            <li><a href="">One more nav</a>
+                            </li>
+                            <li><a href="">Another nav item</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-9 col-md-8  " style="margin-left : 10.3%">
+                        <div class="row placeholders">
+                            <div class="col-xs-6 col-sm-3 placeholder">
+
+                            </div>
+                            <div class="col-xs-6 col-sm-3 placeholder">
+
+                            </div>
+
+                        </div>
+                            
+                        <div class="dropdown">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                                Accounts
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1" data-bind="foreach: childAccs">                            
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-bind="text: $data"></a></li>
+                            </ul>
+                        </div>
+                        <h2 class="sub-header">Transactions</h2>                        
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Amount</th>
+                                        <th>Date</th>
+                                        <th>ImageURL</th>
+                                        <th>Verified</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-bind="foreach : receipts">
+                                    <tr class="receipt" data-bind="visible : archived() != $parent.viewCurrent()"> 
+                                        <td data-bind="text : $index"></td>
+                                        <td data-bind="text : amount"></td>
+                                        <td data-bind="text : new Date(date).toDateString()"></td>
+                                        <td><a target="_blank" data-bind="attr : {href : receiptURL}">Receipt Link</a>
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" data-bind="checked : verified, click : $parent.toggleVerified" class="form-control">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <button class="btn btn-info" id="huehue">Pay</button>
+                        </div>
+                    </div>
+                    <div class="col-md-2 " style="margin-left:4%; margin-top:4%">
+                    	<div id="pie"></div>
+                    	<div id="line"></div>
+                    </div>
+
+                </div>
             </div>
-            <div class="col-xs-6 col-sm-3 placeholder">
-              <div id="line"></div>
-            </div>
 
-          </div>
-
-          <h2 class="sub-header">Transactions</h2>
-          <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Amount</th>
-                  <th>Date</th>
-                  <th>ImageURL</th>
-                  <th>Verified</th>
-                </tr>
-              </thead>
-              <tbody  data-bind="foreach : receipts">
-				<tr class="receipt">
-					<td data-bind="text : $index"></td>
-					<td data-bind="text : amount"></td>
-					<td data-bind="text : new Date(date).toDateString()"></td>
-					<td><a target="_blank" data-bind="attr : {href : receiptURL}">Receipt Link</a></td>
-					<td>  <input type="checkbox" data-bind="checked : verified, click : $parent.toggleVerified" class="form-control" ></td>
-				</tr>
-              </tbody>
-            </table>
-            <button id="huehue">Pay</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!--
+            <!--
 	<div id="body">
 		<input data-bind="value : user"></input>
 		<table class="table" data-bind="foreach : receipts">
@@ -126,28 +153,125 @@
 			</tr>
 		</table>
 	</div>-->
-</body>
+        </body>
 
-<script>
-$(document).ready(function(){
-	var socket = io('localhost:8000/');
+        <script>
+            $(document).ready(function() {
+                var socket = io(document.URL);
 
-	socket.on('update', function(data) {
-		if(data.message == 'message') {
-			console.log(data);
-		} else if(data.message == 'image') {
-			console.log(data);
-		} else if(data.message == 'saving') {
-			console.log(data);
-		} else {
-			console.log('wtf');
-		}
-	});
+                socket.on('update', function(data) {
+                    if (data.message == 'message') {
+                        console.log(data);
+                    } else if (data.message == 'image') {
+                        console.log(data);
+                    } else if (data.message == 'saving') {
+                        console.log(data);
+                    } else {
+                        console.log('wtf');
+                    }
+                });
 
-   $('#line').highcharts({
-   		chart : {
-   			width:600, height:200
-   		},
+                var viewModel = {
+                    user: ko.observable("17148673981"),
+                    userName: ko.observable(),
+                    receipts: ko.observableArray([]),
+                    toggleVerified: function(obj) {
+                        $.post('/toggleVerified', ko.toJS(obj));
+                        return true;
+                    },
+                    setCurrent : function(){
+                    	this.viewCurrent(true);
+                    },
+                    setArchived : function(){
+                    	this.viewCurrent(false);
+                    },
+                    viewCurrent : ko.observable(true),
+                    quota : ko.observable(100),
+                    currChild: ko.observable(""),
+                    childAccs: ko.observableArray([])
+                };
+
+
+            //get the receipts for the currently selected child account
+                ko.computed(function(){
+                    var currChild = this();
+                    if(!currChild){
+                        viewModel.currChild(viewModel.userName());
+                        viewModel.receipts([]);
+                    }else{
+                        $.get("/account/" + currChild, function(account){                            
+                            $.get("/message/" + account[0].phoneNumber, function(data){                                                
+                                data.forEach(function(elem){					
+                                   elem.verified = ko.observable(elem.verified);
+                            	   elem.archived = ko.observable(elem.archived);
+                                })                       
+                                viewModel.receipts(data);   
+                                var expenses = viewModel.receipts().filter(function(e){
+                            	   return e.archived() == false;
+                                });
+                                generateLineChart(expenses);                                
+                                generatePieChart(expenses, viewModel.quota());
+                            });
+                        }); 
+                    }
+                },viewModel.currChild);   
+
+                //get the children of this account
+                ko.computed(function(){
+                    var user = this();
+                    if(user.length == 0){
+                        viewModel.childAccs([]);
+                    }else{
+                        $.get("/user/" + user, function(data){                
+                            viewModel.childAccs(data[0].childAccounts); 
+                            viewModel.userName(data[0].account); //for dashboard for currently logged in user
+                        });
+                    }
+                },viewModel.user);             
+
+
+                $(function(){
+                    $(".dropdown-menu").on('click', 'li a', function(){
+                      $(".btn:first-child").text($(this).text());          
+                      viewModel.currChild($(this).text());             
+                      $(".btn:first-child").html($(this).text()+" <span class=\"caret\"></span>");            
+                   });
+                });
+
+
+                ko.applyBindings(viewModel, document.getElementById("body"));
+
+                $('#huehue').on('click', function() {
+                    var sum = 0;
+                    var fuckyousum = .01;
+                    console.log(viewModel.receipts()); 
+                    viewModel.receipts().forEach(function(element) {
+                        if (element.verified() == true && element.archived() == false) {
+                            sum += element.amount;
+                            element.archived(true);
+                            $.post("/toggleArchived", ko.toJS(element));
+                        }
+
+                    });
+                    console.log((sum * .1).toFixed(2));
+                    window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=' + fuckyousum + '&note=cantstopbacon&audience=private');
+                    //window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=.01&note=faggot&audience=private');
+                });
+
+            });
+
+function generateLineChart(data){
+    var nums = data.map(function(e){
+        return e.amount;
+    })
+    $('#line').highcharts({
+        chart: {
+            width: 300,
+            height: 200
+        },
+        legend : {
+
+        },
         title: {
             text: 'Spending Rate',
             x: -20 //center
@@ -163,135 +287,68 @@ $(document).ready(function(){
                 color: '#808080'
             }]
         },
-        tooltip: {
-            valueSuffix: '°C'
-        },
         legend: {
             layout: 'vertical',
             align: 'right',
             verticalAlign: 'middle',
-            borderWidth: 0
+            borderWidth: 0,
+            enabled : false
+        },
+         credits: {
+        enabled: false
         },
         series: [{
             name: 'Set 1',
-            data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+            data: nums
         }]
     });
-	$('#pie').highcharts({
-        chart: {
-            plotBackgroundColor: null,
-            plotBorderWidth: 1,//null,
-            plotShadow: false,
-            width:200,
-            height:200
-        },
-        title: {
-            text: 'Usage'
-        },
-        tooltip: {
-            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-        },
-        plotOptions: {
-            pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                dataLabels: {
-                    enabled: true,
-                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                    style: {
-                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                    }
-                }
-            }
-        },
-        series: [{
-            type: 'pie',
-            name: 'Usage',
-            data: [
-                ['Used',   45.0],
-                ['Left',       55.0]
-            ]
-        }]
-    });
+}
 
-
-	var viewModel = {
-		user : ko.observable("17148673981"), //because own profile    
-        userName: ko.observable(),
-		receipts : ko.observableArray([]),
-		toggleVerified : function(obj) {
-			$.post('/toggleVerified', obj);
-			return true;
-		},
-        currChild: ko.observable("17148673981"),
-        childAccs: ko.observableArray([])
-	};
-    
-    //get the receipts for the currently selected child account
-    ko.computed(function(){
-		var currChild = this();
-		if(currChild.length == 0){
-			viewModel.receipts([]);
-		}else{
-            $.get("/account/" + currChild, function(account){
-                console.log(account); 
-                $.get("/message/" + account[0].phoneNumber, function(data){                
-                    data.forEach(function(elem){					
-                        if(elem.verified == true){
-                            elem.verified = ko.observable(true);
-                        }else{
-                            elem.verified = ko.observable(false);
+function generatePieChart(data, quota){
+	var d1 = ['Used', 100*((data.reduce(function(prev,curr){return prev + curr.amount},0))/quota)];
+	var d2 = ['Left',  100 - d1[1]];
+	                $('#pie').highcharts({
+                    chart: {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: 1, //null,
+                        plotShadow: false,
+                        width: 300,
+                        height: 200
+                    },
+                     credits: {
+      enabled: false
+  },
+                    title: {
+                        text: 'Usage'
+                    },
+                    tooltip: {
+                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: true,
+                                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                style: {
+                                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                                }
+                            }
                         }
-
-                    })
-                    viewModel.receipts(data);
+                    },
+                    series: [{
+                        type: 'pie',
+                        name: 'Usage',
+                        data: [d1
+                           ,	d2
+                            
+                        ]
+                    }]
                 });
-            }); 
-		}
-	},viewModel.currChild);   
-    
-    //get the children of this account
-	ko.computed(function(){
-		var user = this();
-		if(user.length == 0){
-			viewModel.childAccs([]);
-		}else{
-			$.get("/user/" + user, function(data){                
-				viewModel.childAccs(data[0].childAccounts); 
-                viewModel.userName(data[0].account); //for dashboard for currently logged in user
-			});
-		}
-	},viewModel.user);             
-    
-	ko.applyBindings(viewModel, document.getElementById("body"));
-    
-	$('#huehue').on('click', function() {
-		var sum = 0;
-		var fuckyousum = .01;
-		viewModel.receipts().forEach(function(element) {
-			if(element.verified() == true) {
-				sum += element.amount;
-			}
 
-		});
-		console.log((sum * .1).toFixed(2));
-		window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=' + fuckyousum + '&note=cantstopbacon&audience=private');
+}
 
-		$('.receipt').each(function(element) {
-			console.log(element);
-		});
-		//window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=.01&note=faggot&audience=private');
-	});
-    
-    $(function(){
-        $(".dropdown-menu").on('click', 'li a', function(){
-          $(".btn:first-child").text($(this).text());          
-          viewModel.currChild($(this).text());             
-          $(".btn:first-child").html($(this).text()+" <span class=\"caret\"></span>");            
-       });
-    });
-
-});
-</script>
+        </script>
 
 </html>
