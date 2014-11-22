@@ -84,6 +84,7 @@ app.get('/', function(req, res) {
 		res.render('index');
 	}
 });
+
 app.get("/message/:phone", function(req,res){
 	console.log(req.params);
 	Message.find({userID : "+" + req.params.phone}, function(err,data){
@@ -91,7 +92,7 @@ app.get("/message/:phone", function(req,res){
 	})
 });
 
-app.post('/pay', function(req, res) {
+app.get('/pay', function(req, res) {
 	if(!access_token) {
 		res.send('YOU HAVE TO BE LOGGED IN BITCH');
 	} else {
