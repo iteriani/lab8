@@ -37,8 +37,13 @@
                         </button>
                         <a class="navbar-brand" href="#">Receives &nbsp ✓</i></a>
                     </div>
-                    <div id="navbar" class="navbar-collapse collapse">
+                    <div lass="navbar-collapse collapse">
                     </div>
+                    <!-- MAKE THIS SHOW UP TOO --> 
+                    <ul class="nav navbar-nav navbar-right">
+                        Currently logged in as
+                        <span data-bind="text: user"></span>
+                    </ul>
                 </div>
             </nav>
 
@@ -91,6 +96,8 @@
                         <h2 class="sub-header">Transactions </h2>                        
                         <button class="btn btn-info" id="huehue">Pay using Venmo</button>
                         <input data-bind="value : percentage" style="width:10%"></input> %
+                        <!-- SAM MAKE THIS PRETTY --> 
+                        <div data-bind="text: currChild"></div> 
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
@@ -157,7 +164,7 @@
                     }
                 });
                 var viewModel = {
-                    user: ko.observable("17148673981"),
+                    user: ko.observable(),
                     userName: ko.observable(),
                     receipts: ko.observableArray([]),
                     toggleVerified: function(obj) {
@@ -173,12 +180,19 @@
                     percentage : ko.observable(10),
                     viewCurrent : ko.observable(true),
                     quota : ko.observable(100),
-                    currChild: ko.observable("tomo"),
+                    currChild: ko.observable(),
                     childAccs: ko.observableArray([]),
                     showReceipt : function(elem) { if (elem.nodeType === 1) $(elem).hide().slideDown() },
                     newChild: ko.observable()
-                };
-
+                };                
+                
+                $.get( "/user", function( data ) {                       
+                    console.log(data); 
+                    viewModel.user(data.account); 
+                    viewModel.currChild(data.account); 
+                    viewModel.childAccs(data.childAccounts); 
+                });
+                
                 ko.bindingHandlers.fadeVisible = {
                     init: function(element, valueAccessor) {
                         // Initially set the element to be instantly visible/hidden depending on the value
@@ -248,7 +262,7 @@
                 //get the children of this account
                 ko.computed(function(){
                     var user = this();
-                    if(user.length == 0){
+                    if(user){
                         viewModel.childAccs([]);
                     }else{
                         $.get("/user/" + user, function(data){                

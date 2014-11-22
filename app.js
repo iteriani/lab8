@@ -136,6 +136,14 @@ app.post("/login", function(req, res){
     validateLogin(req, res);    
 }); 
 
+app.get('/user', function(req, res){
+    if(req.session.user){
+        res.send(req.session.user); 
+    }    
+    else
+        res.send("not logged in "); 
+}); 
+
 var validateLogin  = function(req, res){
     var fields = req.body;     
     var username = req.body.users; 
