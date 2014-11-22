@@ -59,6 +59,11 @@ app.get('/message', function(req, res) {
 	res.end();
 });
 
+app.post("/message", function(req,res){
+	console.log(req.body);
+	res.end();
+})
+
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
