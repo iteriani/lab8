@@ -108,8 +108,8 @@
                                         <th>Verified</th>
                                     </tr>
                                 </thead>
-                                <tbody data-bind="foreach : viewedReceipts	">
-                                    <tr class="receipt">
+                                <tbody data-bind="foreach : receipts	">
+                                    <tr class="receipt" data-bind="visible : archived() != $parent.viewCurrent()"> 
                                         <td data-bind="text : $index"></td>
                                         <td data-bind="text : amount"></td>
                                         <td data-bind="text : new Date(date).toDateString()"></td>
@@ -161,7 +161,73 @@
                     }
                 });
 
-                $('#line').highcharts({
+
+
+                var viewModel = {
+                    user: ko.observable("17148673981"),
+                    receipts: ko.observableArray([]),
+                    toggleVerified: function(obj) {
+                        $.post('/toggleVerified', ko.toJS(obj));
+                        return true;
+                    },
+                    setCurrent : function(){
+                    	this.viewCurrent(true);
+                    },
+                    setArchived : function(){
+                    	this.viewCurrent(false);
+                    },
+                    viewCurrent : ko.observable(true),
+                    quota : ko.observable(100)
+                };
+
+
+                ko.computed(function() {
+                    var user = this();
+                    if (user.length == 0) {
+                        viewModel.receipts([]);
+                    } else {
+                        $.get("/message/" + user, function(data) {
+                            data.forEach(function(elem) {
+                            	elem.verified = ko.observable(elem.verified);
+                            	elem.archived = ko.observable(elem.archived);
+                            })
+                            viewModel.receipts(data);
+                            var expenses = viewModel.receipts().filter(function(e){
+                            	return e.archived() == false;
+                            });
+                            generateLineChart(expenses);
+                            generatePieChart(expenses, viewModel.quota());
+                        });
+                    }
+                }, viewModel.user);
+
+
+                ko.applyBindings(viewModel, document.getElementById("body"));
+
+                $('#huehue').on('click', function() {
+                    var sum = 0;
+                    var fuckyousum = .01;
+                    viewModel.receipts().forEach(function(element) {
+                        if (element.verified() == true && element.archived() == false) {
+                            sum += element.amount;
+                            element.archived(true);
+                            $.post("/toggleArchived", ko.toJS(element));
+                        }
+
+                    });
+                    console.log((sum * .1).toFixed(2));
+                    window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=' + fuckyousum + '&note=cantstopbacon&audience=private');
+
+                    //window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=.01&note=faggot&audience=private');
+                });
+
+            });
+
+function generateLineChart(data){
+					var nums = data.map(function(e){
+						return e.amount;
+					})
+	                $('#line').highcharts({
                     chart: {
                         width: 300,
                         height: 200
@@ -184,9 +250,6 @@
                             color: '#808080'
                         }]
                     },
-                    tooltip: {
-                        valueSuffix: '°C'
-                    },
                     legend: {
                         layout: 'vertical',
                         align: 'right',
@@ -196,10 +259,16 @@
                     },
                     series: [{
                         name: 'Set 1',
-                        data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+                        data: nums
                     }]
                 });
-                $('#pie').highcharts({
+
+}
+
+function generatePieChart(data, quota){
+	var d1 = ['Used', 100*((data.reduce(function(prev,curr){return prev + curr.amount},0))/quota)];
+	var d2 = ['Left',  100 - d1[1]];
+	                $('#pie').highcharts({
                     chart: {
                         plotBackgroundColor: null,
                         plotBorderWidth: 1, //null,
@@ -229,78 +298,15 @@
                     series: [{
                         type: 'pie',
                         name: 'Usage',
-                        data: [
-                            ['Used', 45.0],
-                            ['Left', 55.0]
+                        data: [d1
+                           ,	d2
+                            
                         ]
                     }]
                 });
 
+}
 
-                var viewModel = {
-                    user: ko.observable("17148673981"),
-                    receipts: ko.observableArray([]),
-                    toggleVerified: function(obj) {
-                        $.post('/toggleVerified', obj);
-                        return true;
-                    },
-                    setCurrent : function(){
-                    	this.viewCurrent(true);
-                    },
-                    setArchived : function(){
-                    	this.viewCurrent(false);
-                    },
-                    viewCurrent : ko.observable(true)
-                };
-                viewModel.viewedReceipts = ko.computed(function(){
-                	var val = this();
-                	return viewModel.receipts().filter(function(e){
-                		return e.archived != val;
-                	})
-                },viewModel.viewCurrent);
-
-                ko.computed(function() {
-                    var user = this();
-                    if (user.length == 0) {
-                        viewModel.receipts([]);
-                    } else {
-                        $.get("/message/" + user, function(data) {
-                            data.forEach(function(elem) {
-
-                                if (elem.verified == true) {
-                                    elem.verified = ko.observable(true);
-                                } else {
-                                    elem.verified = ko.observable(false);
-                                }
-
-                            })
-                            viewModel.receipts(data);
-                        });
-                    }
-                }, viewModel.user);
-
-
-                ko.applyBindings(viewModel, document.getElementById("body"));
-
-                $('#huehue').on('click', function() {
-                    var sum = 0;
-                    var fuckyousum = .01;
-                    viewModel.viewedReceipts().forEach(function(element) {
-                        if (element.verified() == true) {
-                            sum += element.amount;
-                        }
-
-                    });
-                    console.log((sum * .1).toFixed(2));
-                    window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=' + fuckyousum + '&note=cantstopbacon&audience=private');
-
-                    $('.receipt').each(function(element) {
-                        console.log(element);
-                    });
-                    //window.open('https://venmo.com/?txn=pay&recipients=7148673981&amount=.01&note=faggot&audience=private');
-                });
-
-            });
         </script>
 
 </html>

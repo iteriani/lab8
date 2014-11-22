@@ -63,7 +63,7 @@ var Schema = mongoose.Schema;
 var accSchema = new Schema({
     phoneNumber: Number, 
     account: String,     
-    password: String
+    password: String,
 }); 
 
 var receiptSchema = new Schema({
@@ -204,6 +204,19 @@ app.post('/toggleVerified', function(req, res) {
 			console.log(err);
 		} else {
 			data.verified = req.body.verified;
+			data.save();
+		}
+	});
+	res.end();
+})
+
+
+app.post('/toggleArchived', function(req, res) {
+	Message.findOne({ _id : req.body['_id']}, function(err, data) {
+		if(err) {
+			console.log(err);
+		} else {
+			data.archived = req.body.archived;
 			data.save();
 		}
 	});
