@@ -32,8 +32,26 @@ mongoose.connect('mongodb://cantstopthe:bacon@kahana.mongohq.com:10081/BuddyWatc
 var userList = {};
 /* id : {photo : null, amount : null}*/
 
-var Message = mongoose.model("Recipt", {receiptURL : String, userID : String, amount : Number, date : Date});
+var Schema = mongoose.Schema; 
+/*
+ * Schemas 
+ */ 
+var accSchema = new Schema({
+    phoneNumber: String, account: String, amount: Number
+}); 
+var parentsSchema = new Schema({
+    name: String
+});  
+var receiptSchema = new Schema({
+    receiptURL : String, userID : String, amount : Number
+}); 
 
+/*
+ *  Model definitions 
+ */ 
+var Message = mongoose.model("Recipt", receiptSchema);
+var phoneNumbers = mongoose.model("User", accSchema); 
+var parents = mongoose.model("Parents", parentsSchema); 
 
 // all environments
 app.set('port', process.env.PORT || 8000);
