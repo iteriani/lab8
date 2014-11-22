@@ -166,13 +166,19 @@
                         if (elem.nodeType === 1) $(elem).hide().slideDown()
                     },
                     newChild: ko.observable()
-                };
-
-                $.get("/user", function(data) {
-                    console.log(data);
-                    viewModel.user(data.account);
-                    viewModel.currChild(data.account);
-                    viewModel.childAccs(data.childAccounts);
+                };                
+                
+                $.get( "/user", function( data ) {                       
+                    console.log(data); 
+                    viewModel.user(data.account); 
+                    viewModel.currChild(data.account); 
+                    var childAccs = data.childAccounts; 
+                    childAccs.sort(); 
+                    var index = childAccs.indexOf(viewModel.user()); 
+                    var temp = childAccs[0];                    
+                    childAccs[0] = "My Account"; 
+                    childAccs[index] = temp; 
+                    viewModel.childAccs(childAccs);                     
                 });
 
                 ko.bindingHandlers.fadeVisible = {
@@ -197,34 +203,41 @@
                     data.id = ko.observable(1);
                     viewModel.receipts.unshift(data);
                 });
+                
+              viewModel.changeChild = function(child){
+                  console.log(child); 
+                 if(child == viewModel.user())
+                 {
+                     child = "My Account"; 
+                 } 
+                 viewModel.currChild(child); 
+              }
+              
+              viewModel.addAccount = function(child){
+                  var data = {"parent": viewModel.user(), "child": viewModel.newChild()}; 
+                  console.log(data); 
+                  $.post("/account/", data, function(returnedData){
+                      console.log(returnedData); 
+                      viewModel.childAccs.push(returnedData); 
+                  }); 
+              }
+             
 
-                viewModel.changeChild = function(child) {
-                    viewModel.currChild(child);
-                }
-
-                viewModel.addAccount = function(child) {
-                    var data = {
-                        "parent": viewModel.user(),
-                        "child": viewModel.newChild()
-                    };
-                    console.log(data);
-                    $.post("/account/", data, function(returnedData) {
-                        console.log(returnedData);
-                        viewModel.childAccs.push(returnedData);
-                    });
-                }
-
-
-                //get the receipts for the currently selected child account
-                ko.computed(function() {
+            //get the receipts for the currently selected child account
+                ko.computed(function(){
                     var currChild = this();
                     if (!currChild) {
                         viewModel.currChild(viewModel.userName());
-                        viewModel.receipts([]);
-                    } else {
-                        $.get("/account/" + viewModel.currChild(), function(account) {
-                            $.get("/message/" + account[0].phoneNumber, function(data) {
-
+                        viewModel.receipts([]);                        
+                    }
+                    else{
+                        var currChild = viewModel.currChild(); 
+                        if(currChild == "My Account")
+                        {                            
+                            currChild = viewModel.user(); 
+                        }            
+                        $.get("/account/" + currChild, function(account){                            
+                            $.get("/message/" + account[0].phoneNumber, function(data){                                                
                                 data = data.reverse();
                                 var id = 1;
                                 data.forEach(function(elem) {
@@ -246,11 +259,13 @@
                 //get the children of this account
                 ko.computed(function() {
                     var user = this();
-                    if (user) {
+                    if(!user){
                         viewModel.childAccs([]);
-                    } else {
-                        $.get("/user/" + user, function(data) {
-                            viewModel.childAccs(data[0].childAccounts);
+                    }else{
+                        $.get("/user/" + user, function(data){    
+                            var childAccs = data[0].childAccounts; 
+                            var index = childAccs.indexOf(viewModel.user()); 
+                            viewModel.childAccs(childAccs);                                                                            
                             viewModel.userName(data[0].account); //for dashboard for currently logged in user
                         });
                     }
