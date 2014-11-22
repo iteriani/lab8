@@ -86,6 +86,7 @@
                   <th>Date</th>
                   <th>ImageURL</th>
                   <th>Verified</th>
+                  <th>Pay?</th>
                 </tr>
               </thead>
               <tbody  data-bind="foreach : receipts">
@@ -95,6 +96,7 @@
 					<td data-bind="text : new Date(date).toDateString()"></td>
 					<td><a target="_blank" data-bind="attr : {href : receiptURL}">Receipt Link</a></td>
 					<td>  <input type="checkbox" class="form-control" ></td>
+					<td> <form action="/pay"><input type="submit" /></form></td>
 				</tr>
               </tbody>
             </table>
