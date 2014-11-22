@@ -129,13 +129,17 @@ app.post("/message", function(req,res){
 		request.get("https://api.idolondemand.com/1/api/sync/ocrdocument/v1?url=" 
 				+ userList[phoneNumber].photo + "&mode=document_photo&apikey=826d038b-afde-4f31-a447-a56ae91859f2",
 			function(error,response, body){
-				var data = body.text_block[0].replace(/\s+/g, '');;
+				var data = body.text_block[0].replace(/\s+/g, '');
+				console.log(data);
 				if(data.indexOf(userList[phoneNumber].message)>=0){
 					item.verified = "t";
+					console.log("VERIFIED");
 				}else{
 					item.verified = "f";
+					console.log("NOT VERIFIED");
 				}
 				var message = new Message(item);
+				console.log(message);
 				message.save(function(err,data){
 					if(err){
 						console.log("ERORR");
