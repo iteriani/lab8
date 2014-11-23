@@ -33,6 +33,10 @@ app.use(express.cookieParser('Intro HCI secret key'));
 app.use(express.session());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
+var fs = require('fs'),
+request = require('request');
+var gm = require('gm');
+var imageMagick = gm.subClass({ imageMagick: true });
 
 var server = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
@@ -178,6 +182,7 @@ app.post("/message", function(req,res){
 		console.log("SAVING MESSAGE")
 		var amount = parseFloat(userList[phoneNumber].message);
 		var item = {receiptURL : userList[phoneNumber].photo, userID : phoneNumber, amount : amount, date: new Date(), archived : false};
+        //put imgur stuff here
 		request.get("https://api.idolondemand.com/1/api/sync/ocrdocument/v1?url=" 
 				+ userList[phoneNumber].photo + "&mode=document_photo&apikey=826d038b-afde-4f31-a447-a56ae91859f2",
 			function(error,response, body){
@@ -258,9 +263,42 @@ app.post('/account', function(req, res){
     });
 }); 
 
-/*
+//downloading image 
+var download = function(uri, filename, callback){
 
-*/
+  request.head(uri, function(err, res, body){
+
+    console.log('content-type:', res.headers['content-type']);
+    console.log('content-length:', res.headers['content-length']);
+
+    var r = request(uri).pipe(fs.createWriteStream(filename));
+    r.on('close', callback);
+  });
+};
+/*
+app.get(/testing/, function(req, res){
+    download('https://www.google.com/images/srpr/logo3w.png', 'images/google.png', function(){
+    console.log('Done downloading..');
+    imageMagick('images/google.png')
+    .colorspace("GRAY")
+    .contrast("+8")
+    .write('images/googleasdf.png', function (err) {
+      if (!err) console.log('crazytown has arrived');
+        });
+    });
+}); 
+*/ 
+app.get(/testing/, function(req, res){
+    download('https://media.twiliocdn.com/AC0656d1bf2627a49bc8bcc853629936ff/3a9d6dbbc9cf5b07c54cf40e9c71df99?Expires=1416698755&AWSAccessKeyId=0BEFPVCP30D65040M6G2&Signature=7xxSmGWIUfAWQSmOD%2BbD%2Fv2Q1f8%3D', 'images/imagur.png', function(){
+    console.log('Done downloading..');
+    imageMagick('images/imagur.png')
+    .colorspace ("GRAY")
+    .contrast("-2")
+    .write('images/imgur2.png', function (err) {
+      if (!err) console.log('done 2-bit');
+        });
+    });
+}); 
 
 
 io.on('connection', function(socket) {
