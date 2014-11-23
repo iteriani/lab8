@@ -80,6 +80,20 @@ var receiptSchema = new Schema({
     archived : Boolean
 }); 
 
+var dict = {
+	'0' : ['o', 'O', '8'],
+	'1' : ['7', '1', 'i', 'I', 'l', 'L'],
+	'2' : ['z', 'Z'],
+	'3' : ['8', 'B'],
+	'4' : ['a', 'g', 'A'],
+	'5' : ['s', 'S', '8', '6'],
+	'6' : ['G'],
+	'7' : ['1', 'l', 'I', 'L'],
+	'8' : ['0', '3', 'B'],
+	'9' : ['a'],
+	'.' : []
+};
+
 /*
  *  Model definitions 
  */ 
@@ -160,6 +174,32 @@ var validateLogin  = function(req, res){
     });     
 }
 
+function generate(index, list) {
+	if(index == list[0].length) {
+		return list;
+	}
+
+	var length = list.length;
+
+	for(var i = 0; i < length; i++) {
+		var c = list[i][index];
+		var arr = [];
+		if(list[i] == null) {
+			continue;
+		}
+		if(dict[c] == null){
+			continue;
+		}
+		dict[c].forEach(function(element) {
+			var newString = list[i].slice();
+			newString = newString.slice(0, i) + element + newString.slice(i + 1);
+			list.push(newString);
+		});
+	}
+
+	return generate(index + 1, list);
+}
+
 app.post("/message", function(req,res){
 	var data = req.body;
 	res.end();
@@ -187,13 +227,19 @@ app.post("/message", function(req,res){
 				+ userList[phoneNumber].photo + "&mode=document_photo&apikey=826d038b-afde-4f31-a447-a56ae91859f2",
 			function(error,response, body){
 				body = JSON.parse(body);
-				var data = body.text_block[0].text.replace(/\s+/g, '');
+				var data = body.text_block[0].text.replace(/\s+/g, '').replace(/ /g, ";");
 				console.log(data);
+				item.verified = false;
 				if(data.indexOf(userList[phoneNumber].message)>=0){
-					item.verified = true;
-					console.log("VERIFIED");
+					var list = [];
+					list = generate(0, [userList[phoneNumber].message]);
+
+					list.forEach(function(element) {
+						if(element == userList[phoneNumber].message) {
+							item.verified = true;
+						}
+					});
 				}else{
-					item.verified = false;
 					console.log("NOT VERIFIED");
 				}
 				io.emit('item', item);

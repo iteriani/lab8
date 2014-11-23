@@ -23,6 +23,7 @@
 
     <!-- Custom styles for this template -->
     <link href="http://getbootstrap.com/examples/dashboard/dashboard.css" rel="stylesheet">
+    <!-- :( )= -->
 
     <head>
         <div id="home-background">
@@ -34,13 +35,16 @@
         <body class="container">
             <div class="row">
                 <div style="background-color: white; border: 1px solid black" class="col-sm-3 col-md-2 sidebar">
+                <img src="./images/logo.png" style="width: 100%" alt="">
+                <hr style="height: 1px; background-color: black">
                     <ul class="nav nav-sidebar">
                         <li data-bind="css : {active : viewCurrent}"><a href="#" data-bind="click : setCurrent">Current</a>
                         </li>
                         <li data-bind="css : {active : !viewCurrent()}"><a href="#" data-bind="click : setArchived">Archived</a>
                         </li>
                     </ul>
-                    <hr> ACCOUNTS:
+                    <hr style="height: 1px; background-color: black"> 
+                    ACCOUNTS:
                     <!-- should indent these things -->
                     <ul class="nav nav-sidebar" data-bind="foreach: childAccs">
                         <li>
@@ -50,50 +54,14 @@
                     <ul class="nav nav-sidebar">
                         <li>
                             <form data-bind="submit: addAccount">
-                                <input type="text" class="form-control" data-bind="value : newChild" placeholder="Phone Number" name="users">
+                                <input style="padding-left: 1em; padding-right: 1em;" type="text" class="form-control" data-bind="value : newChild" placeholder="Phone Number" name="users">
                                 </br>
                                 <button class="btn btn-info" type="submit">Add</button>
                             </form>
                         </li>
                     </ul>
                 </div>
-            </nav>
-
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-3 col-md-2 sidebar">
-                        <ul class="nav nav-sidebar">
-                            <li data-bind="css : {active : viewCurrent}"><a href="#" data-bind="click : setCurrent">Current</a>
-                            </li>
-                            <li data-bind="css : {active : !viewCurrent()}"><a href="#" data-bind="click : setArchived">Historical</a>
-                            </li>
-                        </ul>
-                        <hr>
-              
-                        ACCOUNTS: 
-                        <!-- should indent these things --> 
-                        <ul class="nav nav-sidebar" data-bind="foreach: childAccs">                                 
-                            <li><a href="" data-bind="click: $parent.changeChild, text: $data, attr: { id: $data }"></a></li>                                                        
-                        </ul>   
-                        <ul class="nav nav-sidebar">
-                            <li>                            
-                                <form data-bind="submit: addAccount">
-                                    <input type="text" class="form-control" data-bind="value : newChild" placeholder="Phone Number" name="users">
-                                    </br>
-                                    <button class="btn btn-info" type="submit">Add</button>
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="col-sm-9 col-md-8  " style="margin-left : 10.3%">
-                        <div class="row placeholders">
-                            <div class="col-xs-6 col-sm-3 placeholder">
-
-                            </div>
-                            <div class="col-xs-6 col-sm-3 placeholder">
-
-                            </div>
-                <div id="stuff" class="col-sm-9 col-md-8 col-lg-8" style="background-color: white; margin-left:11%; border: 1px solid black;">
+                <div id="stuff" class="col-sm-9 col-md-8 col-lg-8" style="background-color: white; border: 1px solid black; margin-left: 11%">
                     <div class="row placeholders">
                         <div class="col-xs-6 col-sm-3 placeholder">
 
@@ -162,7 +130,7 @@
 
                 $('#stuff').css({
                     height: screen.height
-                });
+                }); 
 
                 var socket = io(document.URL);
 
